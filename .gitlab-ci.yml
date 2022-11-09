@@ -1,0 +1,4 @@
+include:
+  - project: 'devops/ci'
+    ref: v1.0.0
+    file: 'deploy.yaml'
