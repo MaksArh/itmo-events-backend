@@ -2,6 +2,7 @@ import flask
 from flask import request
 
 from typing import Tuple
+from starlette import status
 
 from server import info_logger, error_logger
 
@@ -22,10 +23,10 @@ class NewsHandler:
             with session(bind=engine) as local_session:
                 NewsWorker.add(request.json, local_session)
             info_logger.info(f"News with id: {request.json.get('header')} added.")
-            return flask.make_response("News added"), 200
+            return flask.make_response("News added"), status.HTTP_200_OK
         except Exception as E:
             error_logger.error(E, request.json)
-            return flask.make_response({"error": str(E)}), 500
+            return flask.make_response({"error": str(E)}), status.HTTP_500_INTERNAL_SERVER_ERROR
 
     @staticmethod
     def news_get() -> Tuple[flask.Response, int]:
@@ -36,11 +37,11 @@ class NewsHandler:
         try:
             with session(bind=engine) as local_session:
                 news = NewsWorker.get(local_session, news_id=(request.args.get('news_id', 0)), all_news=False)
-            return (flask.make_response({"news": news}), 200) if news \
-                else (flask.make_response({"error": "Not news"}), 400)
+            return (flask.make_response({"news": news}), status.HTTP_200_OK) if news \
+                else (flask.make_response({"error": "Not news"}), status.HTTP_400_BAD_REQUEST)
         except Exception as E:
             error_logger.error(E, request.json)
-            return flask.make_response({"error": str(E)}), 500
+            return flask.make_response({"error": str(E)}), status.HTTP_500_INTERNAL_SERVER_ERROR
 
     @staticmethod
     def news_get_all() -> Tuple[flask.Response, int]:
@@ -51,11 +52,11 @@ class NewsHandler:
         try:
             with session(bind=engine) as local_session:
                 news = NewsWorker.get(local_session, all_news=True)
-            return (flask.make_response({'news': news}), 200) if news \
-                else (flask.make_response({"error": "Not news"}), 400)
+            return (flask.make_response({'news': news}), status.HTTP_200_OK) if news \
+                else (flask.make_response({"error": "Not news"}), status.HTTP_400_BAD_REQUEST)
         except Exception as E:
             error_logger.error(E, request.json)
-            return flask.make_response({"error": str(E)}), 500
+            return flask.make_response({"error": str(E)}), status.HTTP_500_INTERNAL_SERVER_ERROR
 
     @staticmethod
     def news_update() -> Tuple[flask.Response, int]:
@@ -72,10 +73,10 @@ class NewsHandler:
             with session(bind=engine) as local_session:
                 NewsWorker.update(int(request.json.get('news_id')), request.json.get('news_data_to_update'), local_session)
             info_logger.info(f"News with id:{int(request.json['news_id'])} updated!")
-            return flask.make_response("News updated"), 200
+            return flask.make_response("News updated"), status.HTTP_200_OK
         except Exception as E:
             error_logger.error(E, request.json)
-            return flask.make_response({"error": str(E)}), 500
+            return flask.make_response({"error": str(E)}), status.HTTP_500_INTERNAL_SERVER_ERROR
 
     @staticmethod
     def news_delete() -> Tuple[flask.Response, int]:
@@ -87,7 +88,7 @@ class NewsHandler:
             with session(bind=engine) as local_session:
                 NewsWorker.delete(int(request.json.get('news_id')), local_session)
             info_logger.info(f"News with id: {int(request.json.get('news_id'))} deleted.")
-            return flask.make_response("News deleted"), 200
+            return flask.make_response("News deleted"), status.HTTP_200_OK
         except Exception as E:
             error_logger.error(E, request.json)
-            return flask.make_response({"error": str(E)}), 500
+            return flask.make_response({"error": str(E)}), status.HTTP_500_INTERNAL_SERVER_ERROR

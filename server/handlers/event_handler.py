@@ -2,6 +2,7 @@ import flask
 from flask import request
 
 from typing import Tuple
+from starlette import status
 
 from server import info_logger, error_logger
 
@@ -30,10 +31,10 @@ class EventHandler:
             with session(bind=engine) as local_session:
                 EventWorker.add(request.json, local_session)
             info_logger.info(f"Event \"{request.json['event_name']}\" added!")
-            return flask.make_response("200"), 200
+            return flask.make_response("200"), status.HTTP_200_OK
         except Exception as E:
             error_logger.error(E, request.json)
-            return flask.make_response({"error": str(E)}), 500
+            return flask.make_response({"error": str(E)}), status.HTTP_500_INTERNAL_SERVER_ERROR
 
     @check_auth
     @staticmethod
@@ -55,10 +56,10 @@ class EventHandler:
             with session(bind=engine) as local_session:
                 EventWorker.update(int(request.json['event_id']), request.json['event_data_to_update'], local_session)
             info_logger.info(f"Event with id:{int(request.json['event_id'])} updated!")
-            return flask.make_response("200"), 200
+            return flask.make_response("200"), status.HTTP_200_OK
         except Exception as E:
             error_logger.error(E, request.json)
-            return flask.make_response({"error": str(E)}), 500
+            return flask.make_response({"error": str(E)}), status.HTTP_500_INTERNAL_SERVER_ERROR
 
     @check_auth
     @staticmethod
@@ -71,11 +72,11 @@ class EventHandler:
             with session(bind=engine) as local_session:
                 events = EventWorker.get(local_session=local_session, event_id=int(request.args.get('event_id', 0))
                                          , all_events=False)
-            return (flask.make_response({"event": events}), 200) if events \
-                else (flask.make_response({"error": "Not events"}), 400)
+            return (flask.make_response({"event": events}), status.HTTP_200_OK) if events \
+                else (flask.make_response({"error": "Not events"}), status.HTTP_400_BAD_REQUEST)
         except Exception as E:
             error_logger.error(E, request.json)
-            return flask.make_response({"error": str(E)}), 500
+            return flask.make_response({"error": str(E)}), status.HTTP_500_INTERNAL_SERVER_ERROR
 
     @check_auth
     @staticmethod
@@ -87,11 +88,11 @@ class EventHandler:
         try:
             with session(bind=engine) as local_session:
                 events = EventWorker.get(local_session=local_session, event_id=0, all_events=True)
-            return (flask.make_response({'events': events}), 200) if events \
-                else (flask.make_response({"error": "Not events"}), 400)
+            return (flask.make_response({'events': events}), status.HTTP_200_OK) if events \
+                else (flask.make_response({"error": "Not events"}), status.HTTP_400_BAD_REQUEST)
         except Exception as E:
             error_logger.error(E, request.json)
-            return flask.make_response({"error": str(E)}), 500
+            return flask.make_response({"error": str(E)}), status.HTTP_500_INTERNAL_SERVER_ERROR
 
     @check_auth
     @staticmethod
@@ -104,7 +105,7 @@ class EventHandler:
             with session(bind=engine) as local_session:
                 EventWorker.delete(int(request.json.get('event_id')), local_session)
             info_logger.info(f"Event with id: {int(request.json.get('event_id'))} deleted.")
-            return flask.make_response("Event deleted"), 200
+            return flask.make_response("Event deleted"), status.HTTP_200_OK
         except Exception as E:
             error_logger.error(E, request.json)
-            return flask.make_response({"error": str(E)}), 500
+            return flask.make_response({"error": str(E)}), status.HTTP_500_INTERNAL_SERVER_ERROR

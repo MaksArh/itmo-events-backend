@@ -3,6 +3,8 @@ from flask import request
 from functools import wraps
 
 
+# def is_
+
 def check_auth(handle):
     # 1) receive FWT from front
     # 2) check in db

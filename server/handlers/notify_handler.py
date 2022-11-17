@@ -2,6 +2,7 @@ import flask
 from flask import request
 
 from typing import Tuple
+from starlette import status
 
 from server import info_logger, error_logger
 
@@ -23,10 +24,10 @@ class NotifyHandler:
             with session(bind=engine) as local_session:
                 NotifyWorker.add(request.json, local_session)
             info_logger.info(f"Notify for event {request.json['event_id']} added.")
-            return flask.make_response("Notify added"), 200
+            return flask.make_response("Notify added"), status.HTTP_200_OK
         except Exception as E:
             error_logger.error(E, request.json)
-            return flask.make_response({"error": str(E)}), 500
+            return flask.make_response({"error": str(E)}), status.HTTP_500_INTERNAL_SERVER_ERROR
 
     @staticmethod
     def notify_send():
@@ -42,7 +43,7 @@ class NotifyHandler:
             return notifies
         except Exception as E:
             error_logger.error(E, request.json)
-            return flask.make_response({"error": str(E)}), 500
+            return flask.make_response({"error": str(E)}), status.HTTP_500_INTERNAL_SERVER_ERROR
 
     @staticmethod
     def notify_delete() -> Tuple[flask.Response, int]:
@@ -54,7 +55,7 @@ class NotifyHandler:
             with session(bind=engine) as local_session:
                 NotifyWorker.delete(int(request.json.get('notify_id')), local_session)
             info_logger.info(f"Notify with id: {int(request.json.get('notify_id'))} deleted.")
-            return flask.make_response("Notify deleted"), 200
+            return flask.make_response("Notify deleted"), status.HTTP_200_OK
         except Exception as E:
             error_logger.error(E, request.json)
-            return flask.make_response({"error": str(E)}), 500
+            return flask.make_response({"error": str(E)}), status.HTTP_500_INTERNAL_SERVER_ERROR
