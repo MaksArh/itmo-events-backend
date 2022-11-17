@@ -1,18 +1,18 @@
-
 import flask
 from flask import request
-
-from data_base.tbl_workers import UserWorker
 from typing import Tuple
 
-from server.services.checker import Checker
-
-from configurations.logger_config import info_logger, error_logger
-
+from data_base.tbl_workers import UserWorker
 from data_base.base import engine, session
+
+from server import info_logger, error_logger
+from server.services.checker import Checker
+from server.auth import check_auth
 
 
 class UserHandler:
+
+    @check_auth
     @staticmethod
     def user_add() -> Tuple[flask.Response, int]:
         """
@@ -42,6 +42,7 @@ class UserHandler:
             error_logger.error(E, request.json)
             return flask.make_response({"error": str(E)}), 500
 
+    @check_auth
     @staticmethod
     def user_get_profile() -> Tuple[flask.Response, int]:
         """
@@ -56,6 +57,7 @@ class UserHandler:
             error_logger.error(E, request.json)
             return flask.make_response({"error": str(E)}), 500
 
+    @check_auth
     @staticmethod
     def user_get_history():         # feature
         user_id = request.json.args()
@@ -66,6 +68,7 @@ class UserHandler:
             error_logger.error(E, request.json)
             return flask.make_response({"error": str(E)}), 500
 
+    @check_auth
     @staticmethod
     def user_update() -> Tuple[flask.Response, int]:
         """
@@ -91,6 +94,7 @@ class UserHandler:
             error_logger.error(E, request.json)
             return flask.make_response({"error": str(E)}), 500
 
+    @check_auth
     @staticmethod
     def user_delete() -> Tuple[flask.Response, int]:
         """

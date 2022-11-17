@@ -15,7 +15,7 @@ class DefaultSettings(BaseSettings):
 
     I need three environments: for development, testing and production.
     """
-    TEST = bool(environ.get("TEST", "True"))
+    TEST = bool(environ.get("TEST", "False"))
     if TEST:
         APP_HOST = "127.0.0.1"
         APP_PORT = 8080

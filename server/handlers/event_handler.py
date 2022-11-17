@@ -3,14 +3,16 @@ from flask import request
 
 from typing import Tuple
 
-from configurations.logger_config import info_logger, error_logger
+from server import info_logger, error_logger
 
 from data_base.base import engine, session
 from data_base.tbl_workers.event_worker import EventWorker
+from server.auth import check_auth
 
 
 class EventHandler:
     # ----------------------------------EVENT----------------------------------- TEST_PASSED
+    @check_auth
     @staticmethod
     def event_add() -> Tuple[flask.Response, int]:
         """
@@ -33,6 +35,7 @@ class EventHandler:
             error_logger.error(E, request.json)
             return flask.make_response({"error": str(E)}), 500
 
+    @check_auth
     @staticmethod
     def event_update() -> Tuple[flask.Response, int]:
         """
@@ -57,6 +60,7 @@ class EventHandler:
             error_logger.error(E, request.json)
             return flask.make_response({"error": str(E)}), 500
 
+    @check_auth
     @staticmethod
     def event_get() -> Tuple[flask.Response, int]:
         """
@@ -73,6 +77,7 @@ class EventHandler:
             error_logger.error(E, request.json)
             return flask.make_response({"error": str(E)}), 500
 
+    @check_auth
     @staticmethod
     def event_get_all() -> Tuple[flask.Response, int]:
         """
@@ -88,6 +93,7 @@ class EventHandler:
             error_logger.error(E, request.json)
             return flask.make_response({"error": str(E)}), 500
 
+    @check_auth
     @staticmethod
     def event_delete() -> Tuple[flask.Response, int]:
         """
