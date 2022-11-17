@@ -25,17 +25,11 @@ services:
     build: .
     ports:
       - "8080:8080"
-#    network_mode: host
     depends_on:
       - db
     links:
       - db
-#    env_file:
-#      - .env
     restart: always
-#    command: bash ./gunicorn.sh
-#    command:
-#      - python wsgi.py
 
 
 #  controller:

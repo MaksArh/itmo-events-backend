@@ -9,6 +9,7 @@ from server.handlers.notify_handler import NotifyHandler
 from server.handlers.news_handler import NewsHandler
 from server.handlers.decision_handler import DecisionHandler
 
+
 app = Flask(__name__)
 sys.path.append('../')
 
@@ -59,12 +60,9 @@ def api_add_url():
     app.add_url_rule("/api/decline_event", view_func=DecisionHandler.decline_event, methods=["POST"])
 
 
-
-
 api_add_url()
 
 if __name__ == '__main__':
     print("lol, im here!")
-    api_add_url()
     app.run(host=str(environ.get("APP_HOST", "127.0.0.1")),
             port=int(environ.get("APP_PORT", 8080)))
