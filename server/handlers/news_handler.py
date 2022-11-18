@@ -9,8 +9,11 @@ from server import info_logger, error_logger
 from data_base.base import engine, session
 from data_base.tbl_workers import NewsWorker
 
+from server.services.auth import check_auth
+
 
 class NewsHandler:
+    @check_auth
     @staticmethod
     def news_add() -> Tuple[flask.Response, int]:
         """
@@ -28,6 +31,7 @@ class NewsHandler:
             error_logger.error(E, request.json)
             return flask.make_response({"error": str(E)}), status.HTTP_500_INTERNAL_SERVER_ERROR
 
+    @check_auth
     @staticmethod
     def news_get() -> Tuple[flask.Response, int]:
         """
@@ -43,6 +47,7 @@ class NewsHandler:
             error_logger.error(E, request.json)
             return flask.make_response({"error": str(E)}), status.HTTP_500_INTERNAL_SERVER_ERROR
 
+    @check_auth
     @staticmethod
     def news_get_all() -> Tuple[flask.Response, int]:
         """
@@ -58,6 +63,7 @@ class NewsHandler:
             error_logger.error(E, request.json)
             return flask.make_response({"error": str(E)}), status.HTTP_500_INTERNAL_SERVER_ERROR
 
+    @check_auth
     @staticmethod
     def news_update() -> Tuple[flask.Response, int]:
         """
@@ -78,6 +84,7 @@ class NewsHandler:
             error_logger.error(E, request.json)
             return flask.make_response({"error": str(E)}), status.HTTP_500_INTERNAL_SERVER_ERROR
 
+    @check_auth
     @staticmethod
     def news_delete() -> Tuple[flask.Response, int]:
         """

@@ -10,9 +10,12 @@ from data_base.base import engine, session
 from data_base.tbl_workers.event_worker import EventWorker
 from data_base.tbl_workers import UserWorker
 
+from server.services.auth import check_auth
+
 
 class DecisionHandler:
     # -------------------------EVENT_want/not_want------------------------------ TEST_PASSED
+    @check_auth
     @staticmethod
     def registration(event_id: int, user_isu_number: int, cancel: bool = False) -> Tuple[flask.Response, int]:
         try:
@@ -42,6 +45,7 @@ class DecisionHandler:
             error_logger.error(E, request.json)
             return flask.make_response({"error": str(E)}), status.HTTP_500_INTERNAL_SERVER_ERROR
 
+    @check_auth
     @staticmethod
     def event_registration() -> Tuple[flask.Response, int]:
         """
@@ -53,6 +57,7 @@ class DecisionHandler:
         user_isu_number = int(request.json.get('user_isu_number'))
         return DecisionHandler.registration(event_id=event_id, user_isu_number=user_isu_number)
 
+    @check_auth
     @staticmethod
     def event_cancel_registration():
         """
@@ -65,7 +70,7 @@ class DecisionHandler:
         return DecisionHandler.registration(event_id=event_id, user_isu_number=user_isu_number, cancel=True)
 
     # -------------------------EVENT_apply/decline------------------------------
-
+    @check_auth
     @staticmethod
     def apply_event() -> Tuple[flask.Response, int]:
         """
@@ -98,6 +103,7 @@ class DecisionHandler:
             error_logger.error(E, request.json)
             return flask.make_response({"error": str(E)}), status.HTTP_500_INTERNAL_SERVER_ERROR
 
+    @check_auth
     @staticmethod
     def decline_event() -> Tuple[flask.Response, int]:
         """

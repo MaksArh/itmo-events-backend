@@ -1,16 +1,13 @@
 import sys
 from os import environ
 
-from flask import Flask, redirect, url_for
+from flask import Flask, redirect
 
 from server.handlers.user_handler import UserHandler
 from server.handlers.event_handler import EventHandler
 from server.handlers.notify_handler import NotifyHandler
 from server.handlers.news_handler import NewsHandler
 from server.handlers.decision_handler import DecisionHandler
-
-from server.auth import get_code_auth
-
 
 app = Flask(__name__)
 sys.path.append('../')

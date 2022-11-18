@@ -5,6 +5,7 @@ from typing import Tuple
 from starlette import status
 
 from server import info_logger, error_logger
+from server.services.auth import check_auth
 
 from data_base.base import engine, session
 from data_base.tbl_workers import NotifyWorker
@@ -12,6 +13,7 @@ from data_base.tbl_workers import UserWorker
 
 
 class NotifyHandler:
+    @check_auth
     @staticmethod
     def notify_add() -> Tuple[flask.Response, int]:
         """
@@ -29,6 +31,7 @@ class NotifyHandler:
             error_logger.error(E, request.json)
             return flask.make_response({"error": str(E)}), status.HTTP_500_INTERNAL_SERVER_ERROR
 
+    @check_auth
     @staticmethod
     def notify_send():
         # maybe I delete this API ! # TODO
@@ -45,6 +48,7 @@ class NotifyHandler:
             error_logger.error(E, request.json)
             return flask.make_response({"error": str(E)}), status.HTTP_500_INTERNAL_SERVER_ERROR
 
+    @check_auth
     @staticmethod
     def notify_delete() -> Tuple[flask.Response, int]:
         """

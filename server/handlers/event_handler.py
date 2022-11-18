@@ -8,7 +8,7 @@ from server import info_logger, error_logger
 
 from data_base.base import engine, session
 from data_base.tbl_workers.event_worker import EventWorker
-from server.auth import check_auth
+from server.services.auth import check_auth
 
 
 class EventHandler:

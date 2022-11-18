@@ -10,8 +10,7 @@ import binascii
 client_id = environ.get("CLIENT_ID")
 
 
-def get_key_from_db(header, ItmoidRsaKeys):
-    #берём хэдер, расшифровывем и смотрим есть ли в бд открытый ключ
+def validate_key(header):
     try:
         decoded_header_bytes = base64url_decode(header + '=' * (4 - len(header) % 4))
     except binascii.Error:
@@ -23,6 +22,18 @@ def get_key_from_db(header, ItmoidRsaKeys):
         return {'status': 'Invalid token'}
 
     kid = decoded_header['kid']
+    return kid
+
+
+def get_key_from_db(header, ItmoidRsaKeys):
+    """
+    Берём хэдер,
+    расшифровывем
+    смотрим есть ли в бд открытый ключ
+    """
+    # if is_valid_key(header) == False:
+    #     return
+    kid = validate_key(header)
 
     if len(ItmoidRsaKeys.objects.filter(kid=kid)) == 0:
         return {'status': 'false'}
@@ -42,7 +53,12 @@ def get_key_from_db(header, ItmoidRsaKeys):
 
 
 def verify(token, ItmoidRsaKeys):
-    # расшифровать первую чать токена, сверить kid и затем осуществить проверку JWS с данным ключем (kid) если все успешно отдать ок и пэйлоад
+    """
+    Дешифровать первую часть токена,
+    сверить kid
+    затем осуществить проверку JWS с данным ключем (kid)
+    если все успешно отдать ок и пэйлоад
+    """
 
     if token.count('.') != 2:
         return {"status": "Invalid token"}
@@ -63,7 +79,8 @@ def verify(token, ItmoidRsaKeys):
     res = key.verify(bytes(message, "UTF-8"), decoded_sig)
     if res:
         try:
-            payload = jwt.decode(jwt=token, key=key.to_pem().decode(), algorithms='RS256', audience=client_id)  # with PEM key
+            # with PEM key
+            payload = jwt.decode(jwt=token, key=key.to_pem().decode(), algorithms='RS256', audience=client_id)
             return {"status": "ok", "payload": payload}
 
         except jwt.exceptions.ExpiredSignatureError:
