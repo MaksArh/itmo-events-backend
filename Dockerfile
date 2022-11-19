@@ -1,4 +1,4 @@
-FROM python:3.10.8-slim-bullseye
+FROM python:3.12.0a2-slim-buster
 
 WORKDIR /usr/src/app
 COPY . .
