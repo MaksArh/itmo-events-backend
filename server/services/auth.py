@@ -6,8 +6,8 @@ from functools import wraps
 # def is_
 
 def check_auth(handle):
-    # 1) receive FWT from front
-    # 2) check in db
+    # TODO 1) receive FWT from front
+    # TODO 2) check in db
     @wraps(handle)
     def handle_work(*args, **kwargs):
         print("lol")
