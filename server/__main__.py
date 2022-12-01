@@ -2,12 +2,16 @@ import sys
 from os import environ
 
 from flask import Flask, redirect
+from sqlalchemy_utils import database_exists
 
 from server.handlers.user_handler import UserHandler
 from server.handlers.event_handler import EventHandler
 from server.handlers.notify_handler import NotifyHandler
 from server.handlers.news_handler import NewsHandler
 from server.handlers.decision_handler import DecisionHandler
+
+from configurations.default import DefaultSettings
+
 
 app = Flask(__name__)
 sys.path.append('../')
@@ -20,7 +24,15 @@ def index():
 
 @app.route('/health_app')
 def health_app():
-    return "Hi", 200
+    return "app live", 200
+
+
+@app.route('/health_db')
+def health_db():
+    settings = DefaultSettings()
+    db_uri = settings.database_uri
+    if database_exists(db_uri):
+        return "db connected", 200
 
 
 @app.route('/login')
@@ -74,6 +86,7 @@ def api_add_url():
 
 
 api_add_url()
+
 
 if __name__ == '__main__':
     print("lol, im here!")

@@ -23,7 +23,7 @@ class DefaultSettings(BaseSettings):
         POSTGRES_DB = "test_itmo_event"
         POSTGRES_HOST = "127.0.0.1"
         POSTGRES_USER = "test"
-        POSTGRES_PORT = "5435"
+        POSTGRES_PORT = "5432"
         POSTGRES_PASSWORD = "test"
 
     else:

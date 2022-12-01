@@ -31,6 +31,11 @@ services:
       - db
     restart: always
 
+#    volumes:
+#      - type: bind
+#        source: ./logger.log
+#        target: /logger.log
+
 
 #  controller:
 #    container_name: event_controller

@@ -1,4 +1,5 @@
 from os import environ
+import requests
 
 import jwt
 from jose import jwk
@@ -9,8 +10,15 @@ import binascii
 
 client_id = environ.get("CLIENT_ID")
 
+"""
+нужно в БД хранить открытый ключ для чтения токена
+1) сделать функцию для чтения ключа rsa
+2) 
+"""
 
-def validate_key(header):
+
+def get_key_from_db(header):
+    #берём хэдер, расшифровывем и смотрим есть ли в бд открытый ключ
     try:
         decoded_header_bytes = base64url_decode(header + '=' * (4 - len(header) % 4))
     except binascii.Error:
@@ -22,43 +30,31 @@ def validate_key(header):
         return {'status': 'Invalid token'}
 
     kid = decoded_header['kid']
-    return kid
+    keys = requests.get("https://id.itmo.ru/auth/realms/itmo/protocol/openid-connect/certs")
+
+    rsa_key = keys.json()["keys"][0]
+    return {'status': 'ok', 'rsa_key': rsa_key}
+
+    # if ItmoidRsaKeys.objects.filter(kid=kid):
+    #     return {'status': 'false'}
+    # else:
+    #     # read from db
+    #     db_key = ItmoidRsaKeys.objects.get(kid=kid)
+    #
+    #     rsa_key = {
+    #         "kid": db_key.kid,
+    #         "kty": db_key.kty,
+    #         "alg": db_key.alg,
+    #         "use": db_key.use,
+    #         "n": db_key.n,
+    #         "e": db_key.e
+    #     }
+    #
+        # return {'status': 'ok', 'rsa_key': rsa_key}
 
 
-def get_key_from_db(header, ItmoidRsaKeys):
-    """
-    Берём хэдер,
-    расшифровывем
-    смотрим есть ли в бд открытый ключ
-    """
-    # if is_valid_key(header) == False:
-    #     return
-    kid = validate_key(header)
-
-    if ItmoidRsaKeys.objects.filter(kid=kid):
-        return {'status': 'false'}
-    else:
-        db_key = ItmoidRsaKeys.objects.get(kid=kid)
-
-        rsa_key = {
-            "kid": db_key.kid,
-            "kty": db_key.kty,
-            "alg": db_key.alg,
-            "use": db_key.use,
-            "n": db_key.n,
-            "e": db_key.e
-        }
-
-        return {'status': 'ok', 'rsa_key': rsa_key}
-
-
-def verify(token, ItmoidRsaKeys):
-    """
-    Дешифровать первую часть токена,
-    сверить kid
-    затем осуществить проверку JWS с данным ключем (kid)
-    если все успешно отдать ок и пэйлоад
-    """
+def verify(token):
+    # расшифровать первую чать токена, сверить kid и затем осуществить проверку JWS с данным ключем (kid) если все успешно отдать ок и пэйлоад
 
     if token.count('.') != 2:
         return {"status": "Invalid token"}
@@ -66,7 +62,7 @@ def verify(token, ItmoidRsaKeys):
     message, encoded_sig = token.rsplit('.', 1)
     encoded_header = token.split('.', 1)[0]
 
-    get_key_result = get_key_from_db(encoded_header, ItmoidRsaKeys)
+    get_key_result = get_key_from_db(encoded_header)
     if get_key_result['status'] == 'false':
         return {"status": "Server does not have this token key id (kid) in the cache"}
     elif get_key_result['status'] == 'Invalid token':
@@ -79,8 +75,7 @@ def verify(token, ItmoidRsaKeys):
     res = key.verify(bytes(message, "UTF-8"), decoded_sig)
     if res:
         try:
-            # with PEM key
-            payload = jwt.decode(jwt=token, key=key.to_pem().decode(), algorithms='RS256', audience=client_id)
+            payload = jwt.decode(jwt=token, key=key.to_pem().decode(), algorithms='RS256', audience=client_id)  # with PEM key
             return {"status": "ok", "payload": payload}
 
         except jwt.exceptions.ExpiredSignatureError:

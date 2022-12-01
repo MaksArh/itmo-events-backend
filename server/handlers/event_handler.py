@@ -85,12 +85,14 @@ class EventHandler:
         request.json = {}
         :return: flask.Response({"events": list(dict(events))}), status_code: int
         """
+
         try:
             with session(bind=engine) as local_session:
-                events = EventWorker.get(local_session=local_session, event_id=0, all_events=True)
+                events = EventWorker.get(local_session=local_session, all_events=True)
             return (flask.make_response({'events': events}), status.HTTP_200_OK) if events \
                 else (flask.make_response({"error": "Not events"}), status.HTTP_400_BAD_REQUEST)
         except Exception as E:
+            info_logger.info("events except >>>")
             error_logger.error(E, request.json)
             return flask.make_response({"error": str(E)}), status.HTTP_500_INTERNAL_SERVER_ERROR
 
