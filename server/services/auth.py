@@ -6,7 +6,9 @@ import requests
 from flask import request
 from functools import wraps
 
+from server import info_logger, error_logger
 from server.services.jwt_verify import verify
+
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '../../.env')
 if os.path.exists(dotenv_path):
@@ -23,11 +25,11 @@ def check_auth(handle):
     # TODO 2) verify
     @wraps(handle)
     def handle_work(*args, **kwargs):
-        # print("lol")
-        # a = request.cookies.get("access_token")
+        access_token = request.cookies.get("access_token")
+        if not access_token:
+            access_token = get_access_token()
 
-        # print("a", a)
-        # verify("1")
+        print("access_token", access_token)
         return handle(*args, **kwargs)
 
     return handle_work
@@ -47,11 +49,14 @@ def get_code_auth():
     response = requests.get(address, params=data)
     print("url", response.url)
     print("get_code_auth", response.status_code)
-
-    code = response.json()["code"]
-    print("------", code)
-    print("------", request.args.get("code"))
-    return code
+    if response.status_code == 200:
+        code = response.json()["code"]
+        print("------", code)
+        print("------", request.args.get("code"))
+        return code
+    else:
+        info_logger.error("Problems with getting code for auth")
+        raise "Problems with getting code for auth"
 
 
 def get_access_token():

@@ -33,6 +33,7 @@ def health_db():
     db_uri = settings.database_uri
     if database_exists(db_uri):
         return "db connected", 200
+    return "db doesn't connected", 404
 
 
 @app.route('/login')

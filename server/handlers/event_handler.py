@@ -92,7 +92,6 @@ class EventHandler:
             return (flask.make_response({'events': events}), status.HTTP_200_OK) if events \
                 else (flask.make_response({"error": "Not events"}), status.HTTP_400_BAD_REQUEST)
         except Exception as E:
-            info_logger.info("events except >>>")
             error_logger.error(E, request.json)
             return flask.make_response({"error": str(E)}), status.HTTP_500_INTERNAL_SERVER_ERROR
 
