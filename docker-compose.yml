@@ -9,8 +9,7 @@ services:
       - ./data/db:/var/lib/postgresql/data
     environment:
       - POSTGRES_PORT=${POSTGRES_PORT}
-#      - POSTGRES_HOST=${POSTGRES_HOST}
-      - POSTGRES_HOST="0.0.0.0"
+      - POSTGRES_HOST=${POSTGRES_HOST}
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
@@ -30,11 +29,6 @@ services:
     links:
       - db
     restart: always
-
-#    volumes:
-#      - type: bind
-#        source: ./logger.log
-#        target: /logger.log
 
 
 #  controller:
