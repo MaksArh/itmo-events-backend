@@ -30,7 +30,7 @@ def check_auth(handle):
         if not access_token:
             access_token = get_access_token()
 
-        print("access_token", access_token)
+        print("access_token", access_token, "\nfunk_name:", handle.__name__)
         if jwt_verify:
             stat = verify(access_token)
             if stat["status"] == "ok":
