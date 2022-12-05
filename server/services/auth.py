@@ -19,10 +19,11 @@ client_secret = environ.get("CLIENT_SECRET")
 
 redirect_uri = environ.get("REDIRECT_URI")
 
+jwt_verify = bool(int(environ.get("JWT_VERIFY", 1)))
+
 
 def check_auth(handle):
-    # TODO 1) receive FWT from front
-    # TODO 2) verify
+
     @wraps(handle)
     def handle_work(*args, **kwargs):
         access_token = request.cookies.get("access_token")
@@ -30,6 +31,13 @@ def check_auth(handle):
             access_token = get_access_token()
 
         print("access_token", access_token)
+        if jwt_verify:
+            stat = verify(access_token)
+            if stat["status"] == "ok":
+                payload = stat["payload"]
+            else:
+                return stat["status"], 404
+
         return handle(*args, **kwargs)
 
     return handle_work
