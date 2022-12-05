@@ -31,14 +31,14 @@ services:
     restart: always
 
 
-#  controller:
-#    container_name: event_controller
-#    build: .
-##    environment:
-##      - DB_SERVER=kanban-postgres
-#    depends_on:
-#      - db
-#    links:
-#      - db
-#    restart: always
-#    command: python server/event_controller.py
+  controller:
+    container_name: event_controller
+    build: .
+#    environment:
+#      - DB_SERVER=kanban-postgres
+    depends_on:
+      - db
+    links:
+      - db
+    restart: always
+    command: python server/event_controller.py
