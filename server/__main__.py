@@ -3,6 +3,7 @@ from os import environ
 
 from flask import Flask, redirect, make_response
 from sqlalchemy_utils import database_exists
+from starlette import status
 
 from server.handlers.user_handler import UserHandler
 from server.handlers.event_handler import EventHandler
@@ -20,19 +21,14 @@ sys.path.append('../')
 
 @app.route('/')
 def index():
-    max_age = 24 * 60 * 60  # 10 years
-    expires = datetime.datetime.utcnow() + datetime.timedelta(seconds=max_age)
-    response = make_response("Here, take some cookie!")
-    response.set_cookie(key="access_token", value="lolololololololol", expires=expires, httponly=True)
-    # response.headers["Set-Cookie"] = "myfirstcookie=somecookievalue"
-    return response
-    # return "Hi", 200
+
+    return "Hi", status.HTTP_200_OK
 
 
 @app.route('/health_app')
 def health_app():
 
-    return "app live", 200
+    return "app live", status.HTTP_200_OK
 
 
 @app.route('/health_db')
@@ -40,23 +36,18 @@ def health_db():
     settings = DefaultSettings()
     db_uri = settings.database_uri
     if database_exists(db_uri):
-        return "db connected", 200
-    return "db doesn't connected", 404
+        return "db connected", status.HTTP_200_OK
+    return "db doesn't connected", status.HTTP_404_NOT_FOUND
 
 
 @app.route('/login')
 def login():
-    client_id = environ.get("CLIENT_ID")
-    redirect_uri = environ.get("REDIRECT_URI")
-    scope = environ.get("SCOPE")
-
-    front_url = f"https://id.itmo.ru/auth/realms/itmo/protocol/openid-connect/auth?" \
-                f"client_id={client_id}" \
-                f"&response_type=code&" \
-                f"redirect_uri={redirect_uri}" \
-                f"&scope={scope}"
-
-    return redirect(front_url, code=302)
+    max_age = 24 * 60 * 60
+    expires = datetime.datetime.utcnow() + datetime.timedelta(seconds=max_age)
+    response = make_response("Here, take some cookie!")
+    response.set_cookie(key="access_token", value="lolololololololol", expires=expires, httponly=True)
+    # response.status_code = status.HTTP_200_OK
+    return response
 
 
 def api_add_url():

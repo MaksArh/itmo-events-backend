@@ -3,11 +3,13 @@ from os import environ
 from dotenv import load_dotenv
 
 import requests
-from flask import request
+from flask import request, make_response
 from functools import wraps
 
 from server import info_logger, error_logger
 from server.services.jwt_verify import verify
+
+import datetime
 
 
 dotenv_path = os.path.join(os.path.dirname(__file__), '../../.env')
@@ -80,8 +82,14 @@ def get_access_token():
     address = "https://id.itmo.ru/auth/realms/itmo/protocol/openid-connect/token"
 
     response = requests.post(address, data=data)
-    print(response.content)
 
+    print(response.content)
+    # !TODO тут вроде бы jwt. надо сохранить у клиента
+    # access_token = ""
+    # max_age = 24 * 60 * 60  # 10 years
+    # expires = datetime.datetime.utcnow() + datetime.timedelta(seconds=max_age)
+    # response = make_response("Here, take some cookie!")
+    # response.set_cookie(key="access_token", value=access_token, expires=expires, httponly=True)
     return response
 
 
