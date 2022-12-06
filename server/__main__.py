@@ -1,7 +1,7 @@
 import sys
 from os import environ
 
-from flask import Flask, redirect
+from flask import Flask, redirect, make_response
 from sqlalchemy_utils import database_exists
 
 from server.handlers.user_handler import UserHandler
@@ -12,6 +12,7 @@ from server.handlers.decision_handler import DecisionHandler
 
 from configurations.default import DefaultSettings
 
+import datetime
 
 app = Flask(__name__)
 sys.path.append('../')
@@ -19,11 +20,18 @@ sys.path.append('../')
 
 @app.route('/')
 def index():
-    return "Hi", 200
+    max_age = 24 * 60 * 60  # 10 years
+    expires = datetime.datetime.utcnow() + datetime.timedelta(seconds=max_age)
+    response = make_response("Here, take some cookie!")
+    response.set_cookie(key="access_token", value="lolololololololol", expires=expires, httponly=True)
+    # response.headers["Set-Cookie"] = "myfirstcookie=somecookievalue"
+    return response
+    # return "Hi", 200
 
 
 @app.route('/health_app')
 def health_app():
+
     return "app live", 200
 
 
