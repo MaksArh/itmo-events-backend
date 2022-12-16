@@ -22,6 +22,7 @@ configVariables:
   TBL_TOKEN: token
   JWT_VERIFY: 0
   REDIRECT_URI: https://events.itmo.space/health_app
+  SCOPE: ""
 networkAccess:
   external:
     enabled: true
