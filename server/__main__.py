@@ -1,15 +1,19 @@
 import sys
 from os import environ
 
-from flask import Flask
+from flask import Flask, redirect, make_response
+from sqlalchemy_utils import database_exists
+from starlette import status
 
-from data_base.db_creator import DataBase
 from server.handlers.user_handler import UserHandler
 from server.handlers.event_handler import EventHandler
 from server.handlers.notify_handler import NotifyHandler
 from server.handlers.news_handler import NewsHandler
 from server.handlers.decision_handler import DecisionHandler
 
+from configurations.default import DefaultSettings
+
+import datetime
 
 app = Flask(__name__)
 sys.path.append('../')
@@ -17,7 +21,33 @@ sys.path.append('../')
 
 @app.route('/')
 def index():
-    return "Hi"
+
+    return "Hi", status.HTTP_200_OK
+
+
+@app.route('/health_app')
+def health_app():
+
+    return "app live", status.HTTP_200_OK
+
+
+@app.route('/health_db')
+def health_db():
+    settings = DefaultSettings()
+    db_uri = settings.database_uri
+    if database_exists(db_uri):
+        return "db connected", status.HTTP_200_OK
+    return "db doesn't connected", status.HTTP_404_NOT_FOUND
+
+
+@app.route('/login')
+def login():
+    max_age = 24 * 60 * 60
+    expires = datetime.datetime.utcnow() + datetime.timedelta(seconds=max_age)
+    response = make_response("Here, take some cookie!")
+    response.set_cookie(key="access_token", value="lolololololololol", expires=expires, httponly=True)
+    # response.status_code = status.HTTP_200_OK
+    return response
 
 
 def api_add_url():
@@ -56,12 +86,8 @@ def api_add_url():
 
 
 api_add_url()
-# DataBase.create_db()
+
 
 if __name__ == '__main__':
-    print("lol, im here!")
-    api_add_url()
     app.run(host=str(environ.get("APP_HOST", "127.0.0.1")),
             port=int(environ.get("APP_PORT", 8080)))
-
-    pass
