@@ -1,10 +1,8 @@
-FROM python:latest
+FROM python:3.9
 
 WORKDIR /usr/src/app
 COPY poetry.lock poetry.lock
 COPY pyproject.toml pyproject.toml
-
-RUN mkdir ~/.pip && cd ~/.pip/  && echo "[global] \ntrusted-host =  pypi.douban.com \nindex-url = http://pypi.douban.com/simple" >  pip.conf
 
 RUN pip3 install poetry
 
