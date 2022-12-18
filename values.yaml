@@ -2,6 +2,7 @@ vault:
   enabled: true
   vaultAddr: "https://vault.services.itmo.space"
   roleName: "itmo-events"
+  mountPath: kubernetes
   defaultPath: student-projects/data/itmo-events/backend
   variables:
     - name: POSTGRES_DB
