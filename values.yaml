@@ -29,6 +29,7 @@ networkAccess:
     enabled: true
     domain: events.itmo.space
     pathPrefix: /api
+    ingressClassName: itmo-events
   healthcheck:
     enabled: false
 replicas: 1
