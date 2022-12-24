@@ -3,7 +3,7 @@ import requests
 from datetime import datetime, timedelta
 from random import randint
 
-from test.conftest import cookies
+from tests.conftest import cookies
 
 get_base_url = "http://127.0.0.1:8080"
 

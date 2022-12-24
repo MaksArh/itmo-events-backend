@@ -1,7 +1,7 @@
 import requests
 from starlette import status
 
-from test.conftest import cookies
+from tests.conftest import cookies
 
 
 notify_id = 1

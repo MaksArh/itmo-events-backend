@@ -1,6 +1,6 @@
 import requests
 from starlette import status
-from test.conftest import cookies
+from tests.conftest import cookies
 
 event_id = 1
 # cookies = {'access_token': 'lol_lol_lol'}
