@@ -5,7 +5,7 @@ from typing import Tuple
 from starlette import status
 
 from server import info_logger, error_logger
-from server.services.auth import check_auth
+from server.services.sso.auth import check_auth
 
 from data_base.base import engine, session
 from data_base.tbl_workers import NotifyWorker

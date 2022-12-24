@@ -10,7 +10,7 @@ from data_base.base import engine, session
 from data_base.tbl_workers.event_worker import EventWorker
 from data_base.tbl_workers import UserWorker
 
-from server.services.auth import check_auth
+from server.services.sso.auth import check_auth
 
 
 class DecisionHandler:

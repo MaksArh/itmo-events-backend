@@ -9,7 +9,7 @@ from server import info_logger, error_logger
 from data_base.base import engine, session
 from data_base.tbl_workers import NewsWorker
 
-from server.services.auth import check_auth
+from server.services.sso.auth import check_auth
 
 
 class NewsHandler:

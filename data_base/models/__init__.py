@@ -10,5 +10,5 @@ __all__ = [
     "User",
     "Notify",
     "News",
-    "Token"
+    "Token",
 ]

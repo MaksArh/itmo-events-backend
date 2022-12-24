@@ -8,11 +8,10 @@ from server import info_logger, error_logger
 
 from data_base.base import engine, session
 from data_base.tbl_workers.event_worker import EventWorker
-from server.services.auth import check_auth
+from server.services.sso.auth import check_auth
 
 
 class EventHandler:
-    # ----------------------------------EVENT----------------------------------- TEST_PASSED
     @check_auth
     @staticmethod
     def event_add() -> Tuple[flask.Response, int]:

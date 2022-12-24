@@ -6,9 +6,9 @@ from data_base.tbl_workers.token_worker import TokenWorker
 
 
 __all__ = [
-    EventWorker,
-    UserWorker,
-    NewsWorker,
-    NotifyWorker,
-    TokenWorker,
+    "EventWorker",
+    "UserWorker",
+    "NewsWorker",
+    "NotifyWorker",
+    "TokenWorker",
 ]
