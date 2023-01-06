@@ -1,6 +1,6 @@
 from data_base.base import session
 from server import info_logger, error_logger
-from data_base.models.tbl_token import Token
+from data_base.models.tbl_sso_pub_key import Token
 
 
 class TokenWorker(Token):
