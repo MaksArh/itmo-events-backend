@@ -5,6 +5,7 @@ from flask import Flask, redirect, make_response
 from sqlalchemy_utils import database_exists
 from starlette import status
 
+from server.handlers.login_handler import login
 from server.handlers.user_handler import UserHandler
 from server.handlers.event_handler import EventHandler
 from server.handlers.notify_handler import NotifyHandler
@@ -13,25 +14,24 @@ from server.handlers.decision_handler import DecisionHandler
 
 from configurations.default import DefaultSettings
 
-import datetime
 
 app = Flask(__name__)
 sys.path.append('../')
 
 
-@app.route('/')
+@app.route('/api/')
 def index():
 
     return "Hi", status.HTTP_200_OK
 
 
-@app.route('/health_app')
+@app.route('/api/health_app')
 def health_app():
 
     return "app live", status.HTTP_200_OK
 
 
-@app.route('/health_db')
+@app.route('/api/health_db')
 def health_db():
     settings = DefaultSettings()
     db_uri = settings.database_uri
@@ -40,17 +40,9 @@ def health_db():
     return "db doesn't connected", status.HTTP_404_NOT_FOUND
 
 
-@app.route('/login')
-def login():
-    max_age = 24 * 60 * 60
-    expires = datetime.datetime.utcnow() + datetime.timedelta(seconds=max_age)
-    response = make_response("Here, take some cookie!")
-    response.set_cookie(key="access_token", value="lolololololololol", expires=expires, httponly=True)
-    # response.status_code = status.HTTP_200_OK
-    return response
-
-
 def api_add_url():
+    app.add_url_rule("/api/login", view_func=login)
+
     # ----------------------------------USER-----------------------------------
     app.add_url_rule("/api/user/add", view_func=UserHandler.user_add, methods=["POST"])
     app.add_url_rule("/api/user/get", view_func=UserHandler.user_get_profile, methods=["GET"])

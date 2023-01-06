@@ -1,6 +1,3 @@
-from os import environ
-import requests
-
 import jwt
 from jose import jwk
 from jose.utils import base64url_decode
@@ -8,11 +5,11 @@ import json
 import binascii
 
 
-client_id = environ.get("CLIENT_ID")
+from server.services.sso.env_params import client_id
 
 
-def get_key_from_db(header):
-    #берём хэдер, расшифровывем и смотрим есть ли в бд открытый ключ
+def get_key(header):
+    # берём хэдер, расшифровываем и смотрим есть ли в бд открытый ключ
     try:
         decoded_header_bytes = base64url_decode(header + '=' * (4 - len(header) % 4))
     except binascii.Error:
@@ -24,15 +21,11 @@ def get_key_from_db(header):
         return {'status': 'Invalid token'}
 
     kid = decoded_header['kid']
-    keys = requests.get("https://id.itmo.ru/auth/realms/itmo/protocol/openid-connect/certs")
 
-    rsa_key = keys.json()["keys"][0]
-    return {'status': 'ok', 'rsa_key': rsa_key}
-
-    # if ItmoidRsaKeys.objects.filter(kid=kid):
-    #     return {'status': 'false'}
+    # # get from db
+    # if len(ItmoidRsaKeys.objects.filter(kid=kid)) == 0:
+    #     return {'status': 'ok', 'rsa_key': ItmoId.get_pub_keys()}
     # else:
-    #     # read from db
     #     db_key = ItmoidRsaKeys.objects.get(kid=kid)
     #
     #     rsa_key = {
@@ -44,19 +37,20 @@ def get_key_from_db(header):
     #         "e": db_key.e
     #     }
     #
-        # return {'status': 'ok', 'rsa_key': rsa_key}
+    #     return {'status': 'ok', 'rsa_key': rsa_key}
 
 
-def verify(token):
-    # расшифровать первую чаcть токена, сверить kid и затем осуществить проверку JWS с данным ключем (kid) если все успешно отдать ок и пэйлоад
+def verify(access_token: str):
+    # расшифровать первую чаcть токена, сверить kid и затем осуществить проверку JWS с данным ключем (kid) если все
+    # успешно отдать ок и пэйлоад
 
-    if token.count('.') != 2:
+    if access_token.count('.') != 2:
         return {"status": "Invalid token"}
 
-    message, encoded_sig = token.rsplit('.', 1)
-    encoded_header = token.split('.', 1)[0]
+    message, encoded_sig = access_token.rsplit('.', 1)
+    encoded_header = access_token.split('.', 1)[0]
 
-    get_key_result = get_key_from_db(encoded_header)
+    get_key_result = get_key(encoded_header)
     if get_key_result['status'] == 'false':
         return {"status": "Server does not have this token key id (kid) in the cache"}
     elif get_key_result['status'] == 'Invalid token':
@@ -69,7 +63,7 @@ def verify(token):
     res = key.verify(bytes(message, "UTF-8"), decoded_sig)
     if res:
         try:
-            payload = jwt.decode(jwt=token, key=key.to_pem().decode(), algorithms='RS256', audience=client_id)  # with PEM key
+            payload = jwt.decode(jwt=access_token, key=key.to_pem().decode(), algorithms='RS256', audience=client_id)  # with PEM key
             return {"status": "ok", "payload": payload}
 
         except jwt.exceptions.ExpiredSignatureError:

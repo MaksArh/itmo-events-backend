@@ -1,61 +1,64 @@
 import requests
-from flask import request
+from flask import redirect
 
-from server import info_logger
-from server.services.sso.env_params import client_id, client_secret, redirect_uri
+from server.services.sso.env_params import client_id, client_secret, redirect_uri, post_logout_redirect_uri, scope
 
 
 class ItmoId:
+
     @staticmethod
     def get_code_auth():
-        data = {
-            "client_id": client_id,
-            "response_type": "code",
-            "redirect_uri": redirect_uri,
-            "scope": "openid profile email",
-        }
+        """
+        Получение кода авторизации
+        GET https://id.itmo.ru/auth/realms/itmo/protocol/openid-connect/auth
+        """
 
         address = "https://id.itmo.ru/auth/realms/itmo/protocol/openid-connect/auth"
+        address += f"?client_id={client_id}" \
+                   f"&response_type='code'" \
+                   f"&redirect_uri={redirect_uri}" \
+                   f"&scope={scope}"
 
-        print(data)
-        response = requests.get(address, params=data)
-        print("url", response.url)
-        print("get_code_auth", response.status_code)
-        if response.status_code == 200:
-            code = response.json()["code"]
-            print("------", code)
-            print("------", request.args.get("code"))
-            return code
-        else:
-            info_logger.error("Problems with getting code for auth")
-            raise "Problems with getting code for auth"
+        return redirect(location=address, code=302)
 
     @staticmethod
-    def get_access_token():
-        code = ItmoId.get_code_auth()
-        data = {
-            "client_id": client_id,
-            "client_secret": client_secret,
-            "grant_type": "authorization_code",
-            "redirect_uri": redirect_uri,
-            "code": code,
-        }
+    def get_access_token(code: str):
+        """
+        Получение Access Token
+        POST https://id.itmo.ru/auth/realms/itmo/protocol/openid-connect/token
+        """
 
         address = "https://id.itmo.ru/auth/realms/itmo/protocol/openid-connect/token"
+        address += f"?client_id={client_id}" \
+                   f"&client_secret={client_secret}" \
+                   f"&grant_type='authorization_code'" \
+                   f"&redirect_uri={redirect_uri}" \
+                   f"&code={code}"
 
-        response = requests.post(address, data=data)
+        return redirect(location=address, code=302)
 
-        print(response.content)
-        # !TODO тут вроде бы jwt. надо сохранить у клиента
-        # access_token = ""
-        # max_age = 24 * 60 * 60  # 10 years
-        # expires = datetime.datetime.utcnow() + datetime.timedelta(seconds=max_age)
-        # response = make_response("Here, take some cookie!")
-        # response.set_cookie(key="access_token", value=access_token, expires=expires, httponly=True)
-        return response
+    @staticmethod
+    def get_user_info():
+        """         TODO: НЕ СРАБОТАЛО(
+        Получение информации о пользователе по эндпоинту
+        GET https://id.itmo.ru/auth/realms/itmo/protocol/openid-connect/userinfo
+        Header: Authorization=Bearer ${access_token}
+        """
+
+        address = "https://id.itmo.ru/auth/realms/itmo/protocol/openid-connect/userinfo"
+        access_token = ""
+
+        response = requests.get(address, headers={"Authorization": f"Bearer {access_token}"})
+        print(response.status_code)
+        print(response.headers)
+        return response.content.decode()
 
     @staticmethod
     def get_pub_keys():
+        """
+        Получение публичных ключей
+        GET https://id.itmo.ru/auth/realms/itmo/protocol/openid-connect/certs
+        """
 
         address = "https://id.itmo.ru/auth/realms/itmo/protocol/openid-connect/certs"
 
@@ -63,8 +66,26 @@ class ItmoId:
         print("pub_keys:", response.content.decode())
         return response.content.decode()
 
+    @staticmethod
+    def leave_sso():
+        """
+        Выход из SSO
+        GET https://id.itmo.ru/auth/realms/itmo/protocol/openid-connect/logout
+        """
+        address = "https://id.itmo.ru/auth/realms/itmo/protocol/openid-connect/logout"
 
-# if __name__ == "__main__":
+        data = {
+            "client_id": client_id,
+            "post_logout_redirect_uri": post_logout_redirect_uri
+        }
+        response = requests.get(address, params=data)
+        return response.status_code
+
+
+if __name__ == "__main__":
     # ItmoId.get_access_token()
     # ItmoId.get_code_auth()
-    # ItmoId.get_pub_keys()
+    # print(ItmoId.get_pub_keys())
+    # print(ItmoId.leave_sso())
+    # print(ItmoId.get_user_info())
+    pass
