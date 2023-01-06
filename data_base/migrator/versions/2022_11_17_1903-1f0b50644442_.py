@@ -9,6 +9,7 @@ from sqlalchemy import Column, func
 from sqlalchemy.dialects.postgresql import (INTEGER, TIMESTAMP, BOOLEAN, VARCHAR, ARRAY)
 
 from alembic import op
+import datetime
 from sqlalchemy.dialects import postgresql
 from data_base.base import settings
 
@@ -68,11 +69,16 @@ def upgrade():
         Column('time', TIMESTAMP),
     )
     op.create_table(
-        settings.TBL_TOKEN,
-        Column('user_id', INTEGER, unique=True),
-        Column('user_id', VARCHAR, unique=True),
-        Column('user_id', VARCHAR),
+        settings.TBL_SSO_PUB_KEY,
+        Column("kid", VARCHAR, unique=True, primary_key=True),
+        Column("kty", VARCHAR),
+        Column("alg", VARCHAR),
+        Column("use", VARCHAR),
+        Column("n", VARCHAR),
+        Column("e", VARCHAR),
+        Column("expires", TIMESTAMP, default=datetime.datetime.now()),
     )
+
     # ### end Alembic commands ###
 
 
@@ -82,5 +88,5 @@ def downgrade():
     op.drop_table(settings.TBL_USERS)
     op.drop_table(settings.TBL_NOTIFIES)
     op.drop_table(settings.TBL_NEWS)
-    op.drop_table(settings.TBL_TOKEN)
+    op.drop_table(settings.TBL_SSO_PUB_KEY)
     # ### end Alembic commands ###

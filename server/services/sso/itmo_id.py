@@ -1,6 +1,10 @@
 import requests
 from flask import redirect
 
+from server import info_logger, error_logger
+
+from data_base.base import engine, session
+from data_base.tbl_workers import SsoPubKeyWorker
 from server.services.sso.env_params import client_id, client_secret, redirect_uri, post_logout_redirect_uri, scope
 
 
@@ -51,7 +55,9 @@ class ItmoId:
         response = requests.get(address, headers={"Authorization": f"Bearer {access_token}"})
         print(response.status_code)
         print(response.headers)
-        return response.content.decode()
+
+        user_info = response.json()
+        return user_info
 
     @staticmethod
     def get_pub_keys():
@@ -63,8 +69,15 @@ class ItmoId:
         address = "https://id.itmo.ru/auth/realms/itmo/protocol/openid-connect/certs"
 
         response = requests.get(address)
-        print("pub_keys:", response.content.decode())
-        return response.content.decode()
+        pub_keys = response.json()
+        for key in pub_keys["keys"]:
+            print(key)
+            try:
+                with session(bind=engine) as local_session:
+                    SsoPubKeyWorker.add(key, local_session=local_session)
+                info_logger.info(f"SSO pub key added.")
+            except Exception as E:
+                error_logger.error(E, f"SSO pub key not added.")
 
     @staticmethod
     def leave_sso():
@@ -85,7 +98,7 @@ class ItmoId:
 if __name__ == "__main__":
     # ItmoId.get_access_token()
     # ItmoId.get_code_auth()
-    # print(ItmoId.get_pub_keys())
+    ItmoId.get_pub_keys()
     # print(ItmoId.leave_sso())
     # print(ItmoId.get_user_info())
     pass

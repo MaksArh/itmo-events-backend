@@ -25,19 +25,19 @@ def get_key(header):
     # # get from db
     # if len(ItmoidRsaKeys.objects.filter(kid=kid)) == 0:
     #     return {'status': 'ok', 'rsa_key': ItmoId.get_pub_keys()}
-    # else:
-    #     db_key = ItmoidRsaKeys.objects.get(kid=kid)
+
+    # db_key = ItmoidRsaKeys.objects.get(kid=kid)
     #
-    #     rsa_key = {
-    #         "kid": db_key.kid,
-    #         "kty": db_key.kty,
-    #         "alg": db_key.alg,
-    #         "use": db_key.use,
-    #         "n": db_key.n,
-    #         "e": db_key.e
-    #     }
+    # rsa_key = {
+    #     "kid": db_key.kid,
+    #     "kty": db_key.kty,
+    #     "alg": db_key.alg,
+    #     "use": db_key.use,
+    #     "n": db_key.n,
+    #     "e": db_key.e
+    # }
     #
-    #     return {'status': 'ok', 'rsa_key': rsa_key}
+    # return {'status': 'ok', 'rsa_key': rsa_key}
 
 
 def verify(access_token: str):
