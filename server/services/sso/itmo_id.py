@@ -60,7 +60,7 @@ class ItmoId:
         return user_info
 
     @staticmethod
-    def get_pub_keys():
+    def add_pub_keys():
         """
         Получение публичных ключей
         GET https://id.itmo.ru/auth/realms/itmo/protocol/openid-connect/certs
@@ -98,7 +98,7 @@ class ItmoId:
 if __name__ == "__main__":
     # ItmoId.get_access_token()
     # ItmoId.get_code_auth()
-    ItmoId.get_pub_keys()
+    ItmoId.add_pub_keys()
     # print(ItmoId.leave_sso())
     # print(ItmoId.get_user_info())
     pass

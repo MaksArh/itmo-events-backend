@@ -5,7 +5,11 @@ import json
 import binascii
 
 
+from data_base.base import engine, session
+
 from server.services.sso.env_params import client_id
+from server.services.sso.itmo_id import ItmoId
+from data_base.tbl_workers.sso_pub_key_worker import SsoPubKeyWorker
 
 
 def get_key(header):
@@ -22,22 +26,17 @@ def get_key(header):
 
     kid = decoded_header['kid']
 
-    # # get from db
-    # if len(ItmoidRsaKeys.objects.filter(kid=kid)) == 0:
-    #     return {'status': 'ok', 'rsa_key': ItmoId.get_pub_keys()}
+    with session(bind=engine) as local_session:
+        db_key = SsoPubKeyWorker.get(kid=kid, local_session=local_session)
 
-    # db_key = ItmoidRsaKeys.objects.get(kid=kid)
-    #
-    # rsa_key = {
-    #     "kid": db_key.kid,
-    #     "kty": db_key.kty,
-    #     "alg": db_key.alg,
-    #     "use": db_key.use,
-    #     "n": db_key.n,
-    #     "e": db_key.e
-    # }
-    #
-    # return {'status': 'ok', 'rsa_key': rsa_key}
+    if len(db_key) == 0:
+        ItmoId.add_pub_keys()
+
+        with session(bind=engine) as local_session:
+            db_key = SsoPubKeyWorker.get(kid=kid, local_session=local_session)
+    if len(db_key) == 0:
+        return {'status': 'false'}
+    return {'status': 'ok', 'rsa_key': db_key}
 
 
 def verify(access_token: str):
