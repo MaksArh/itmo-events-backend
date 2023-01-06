@@ -1,45 +1,42 @@
 from data_base.base import session
 from server import info_logger, error_logger
-from data_base.models.tbl_sso_pub_key import Token
+from data_base.models.tbl_sso_pub_key import SsoPubKey
 
 
-class TokenWorker(Token):
-    def __init__(self, token_data: dict):
-        self.user_id = token_data['user_id']
-        self.access_token = token_data['access_token']
-        self.refresh_token = token_data['refresh_token']
+class SsoPubKeyWorker(SsoPubKey):
+    def __init__(self, sso_pub_key_data: dict):
+        self.kid = sso_pub_key_data["kid"]
+        self.kty = sso_pub_key_data["kty"]
+        self.alg = sso_pub_key_data["alg"]
+        self.use = sso_pub_key_data["use"]
+        self.n = sso_pub_key_data["n"]
+        self.e = sso_pub_key_data["e"]
 
     def get_dict(self):
-        atts_dict = {"user_id": self.user_id,
-                     "access_token": self.access_token,
-                     "refresh_token": self.refresh_token}
+        atts_dict = {"kid": self.kid,
+                     "kty": self.kty,
+                     "alg": self.alg,
+                     "use": self.use,
+                     "n": self.n,
+                     "e": self.e,
+                     }
         return atts_dict
 
     @staticmethod
-    def add(token_to_add: dict, local_session: session):
-        local_session.add(TokenWorker(token_to_add))
+    def add(sso_pub_key_to_add: dict, local_session: session):
+        local_session.add(SsoPubKeyWorker(sso_pub_key_to_add))
 
     @staticmethod
-    def get(local_session: session, user_id: int):
-        user_token = local_session.query(TokenWorker).filter(TokenWorker.user_id == user_id).first()
-        if user_token:
-            return user_token.get_dict()
+    def get(local_session: session, kid: str):
+        sso_pub_key = local_session.query(SsoPubKeyWorker).filter(SsoPubKeyWorker.kid == kid).first()
+        if sso_pub_key:
+            return sso_pub_key.get_dict()
         return {}
 
     @staticmethod
-    def update(user_id: int, token_data_to_update: dict, local_session: session):
-        token_to_update = local_session.query(TokenWorker).filter(TokenWorker.user_id == user_id).first()
-        if token_to_update:
-            token_to_update.access_token = token_data_to_update["access_token"]
-            token_to_update.refresh_token = token_data_to_update["refresh_token"]
-
+    def delete(kid: int, local_session: session):
+        sso_pub_key_to_delete = local_session.query(SsoPubKeyWorker).filter(SsoPubKeyWorker.kid == kid).first()
+        if sso_pub_key_to_delete:
+            local_session.delete(sso_pub_key_to_delete)
         else:
-            info_logger.error(f'Token for user_id: {user_id} does not exist!')
-
-    @staticmethod
-    def delete(user_id: int, local_session: session):
-        token_to_delete = local_session.query(TokenWorker).filter(TokenWorker.user_id == user_id).first()
-        if token_to_delete:
-            local_session.delete(token_to_delete)
-        else:
-            info_logger.error(f'Token for user_id: {user_id} does not exist!')
+            info_logger.error(f'sso_pub_key with kid: {kid} does not exist!')
