@@ -4,6 +4,8 @@ from flask import request
 from typing import Tuple
 from starlette import status
 
+from configurations.config import LEN_ERR_MSG
+
 from server import info_logger, error_logger
 from server.services.sso.auth import check_auth
 
@@ -28,8 +30,8 @@ class NotifyHandler:
             info_logger.info(f"Notify for event {request.json['event_id']} added.")
             return flask.make_response("Notify added"), status.HTTP_200_OK
         except Exception as E:
-            error_logger.error(E, request.json)
-            return flask.make_response({"error": str(E)}), status.HTTP_500_INTERNAL_SERVER_ERROR
+            error_logger.error(E)
+            return flask.make_response({"error": str(E)[:LEN_ERR_MSG] + " ..."}), status.HTTP_500_INTERNAL_SERVER_ERROR
 
     @check_auth
     @staticmethod
@@ -45,8 +47,8 @@ class NotifyHandler:
 
             return notifies
         except Exception as E:
-            error_logger.error(E, request.json)
-            return flask.make_response({"error": str(E)}), status.HTTP_500_INTERNAL_SERVER_ERROR
+            error_logger.error(E)
+            return flask.make_response({"error": str(E)[:LEN_ERR_MSG] + " ..."}), status.HTTP_500_INTERNAL_SERVER_ERROR
 
     @check_auth
     @staticmethod
@@ -61,5 +63,5 @@ class NotifyHandler:
             info_logger.info(f"Notify with id: {int(request.json.get('notify_id'))} deleted.")
             return flask.make_response("Notify deleted"), status.HTTP_200_OK
         except Exception as E:
-            error_logger.error(E, request.json)
-            return flask.make_response({"error": str(E)}), status.HTTP_500_INTERNAL_SERVER_ERROR
+            error_logger.error(E)
+            return flask.make_response({"error": str(E)[:LEN_ERR_MSG] + " ..."}), status.HTTP_500_INTERNAL_SERVER_ERROR

@@ -5,12 +5,14 @@ from starlette import status
 from typing import Tuple
 
 from server.services.checker import Checker
+from server.services.sso.auth import check_auth
+
 from configurations.logger_config import info_logger, error_logger
+from configurations.config import LEN_ERR_MSG
+
 from data_base.base import engine, session
 from data_base.tbl_workers.event_worker import EventWorker
 from data_base.tbl_workers import UserWorker
-
-from server.services.sso.auth import check_auth
 
 
 class DecisionHandler:
@@ -42,8 +44,8 @@ class DecisionHandler:
 
             return flask.make_response("OK"), status.HTTP_200_OK
         except Exception as E:
-            error_logger.error(E, request.json)
-            return flask.make_response({"error": str(E)}), status.HTTP_500_INTERNAL_SERVER_ERROR
+            error_logger.error(E)
+            return flask.make_response({"error": str(E)[:LEN_ERR_MSG] + " ..."}), status.HTTP_500_INTERNAL_SERVER_ERROR
 
     @check_auth
     @staticmethod
@@ -100,8 +102,8 @@ class DecisionHandler:
                     info_logger.error(f'User with id: {user_isu_number} can not apply event: {event_id}.')
                     return flask.make_response("User can not apply event"), status.HTTP_200_OK
         except Exception as E:
-            error_logger.error(E, request.json)
-            return flask.make_response({"error": str(E)}), status.HTTP_500_INTERNAL_SERVER_ERROR
+            error_logger.error(E)
+            return flask.make_response({"error": str(E)[:LEN_ERR_MSG] + " ..."}), status.HTTP_500_INTERNAL_SERVER_ERROR
 
     @check_auth
     @staticmethod
@@ -131,5 +133,5 @@ class DecisionHandler:
                     info_logger.error(f'User with id: {user_isu_number} not in list event_go on event: {event_id}.')
                     return flask.make_response({"error": "User decline event"}), status.HTTP_200_OK
         except Exception as E:
-            error_logger.error(E, request.json)
-            return flask.make_response({"error": str(E)}), status.HTTP_500_INTERNAL_SERVER_ERROR
+            error_logger.error(E)
+            return flask.make_response({"error": str(E)[:LEN_ERR_MSG] + " ..."}), status.HTTP_500_INTERNAL_SERVER_ERROR
