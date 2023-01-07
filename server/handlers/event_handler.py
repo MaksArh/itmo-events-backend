@@ -89,7 +89,7 @@ class EventHandler:
             with session(bind=engine) as local_session:
                 events = EventWorker.get(local_session=local_session, all_events=True)
             return (flask.make_response({'events': events}), status.HTTP_200_OK) if events \
-                else (flask.make_response({"error": "Not events"}), status.HTTP_400_BAD_REQUEST)
+                else (flask.make_response({"info": "Not events"}), status.HTTP_400_BAD_REQUEST)
         except Exception as E:
             error_logger.error(E, request.json)
             return flask.make_response({"error": str(E)}), status.HTTP_500_INTERNAL_SERVER_ERROR

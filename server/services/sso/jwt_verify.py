@@ -3,7 +3,7 @@ from jose import jwk
 from jose.utils import base64url_decode
 import json
 import binascii
-
+import datetime
 
 from data_base.base import engine, session
 
@@ -29,7 +29,10 @@ def get_key(header):
     with session(bind=engine) as local_session:
         db_key = SsoPubKeyWorker.get(kid=kid, local_session=local_session)
 
-    if len(db_key) == 0:
+    if len(db_key) == 0 or datetime.datetime.now() - db_key["expires"] > datetime.timedelta(hours=10):
+        with session(bind=engine) as local_session:
+            SsoPubKeyWorker.delete(kid=kid, local_session=local_session)
+
         ItmoId.add_pub_keys()
 
         with session(bind=engine) as local_session:
