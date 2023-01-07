@@ -12,13 +12,15 @@ class SsoPubKeyWorker(SsoPubKey):
         self.n = sso_pub_key_data["n"]
         self.e = sso_pub_key_data["e"]
 
-    def get_dict(self):
-        atts_dict = {"kid": self.kid,
-                     "kty": self.kty,
-                     "alg": self.alg,
-                     "use": self.use,
-                     "n": self.n,
-                     "e": self.e,
+    @staticmethod
+    def get_dict(sso_pub_key):
+        atts_dict = {"kid": sso_pub_key.kid,
+                     "kty": sso_pub_key.kty,
+                     "alg": sso_pub_key.alg,
+                     "use": sso_pub_key.use,
+                     "n": sso_pub_key.n,
+                     "e": sso_pub_key.e,
+                     "expires": sso_pub_key.expires
                      }
         return atts_dict
 
@@ -30,7 +32,7 @@ class SsoPubKeyWorker(SsoPubKey):
     def get(kid: str, local_session: session):
         sso_pub_key = local_session.query(SsoPubKeyWorker).filter(SsoPubKeyWorker.kid == kid).first()
         if sso_pub_key:
-            return sso_pub_key.get_dict()
+            return SsoPubKeyWorker.get_dict(sso_pub_key)
         return {}
 
     @staticmethod
