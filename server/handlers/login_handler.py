@@ -16,14 +16,13 @@ def set_tokens(access_token: str, expires_in: int, refresh_token: str, refresh_e
     return response
 
 
-def login():  # это должен быть redirect_uri !!!!!!!!!!!!!
-    print("login ...")
+def login():
     code = request.args.get('code')
-    print("code", code)
     if not code:
         return make_response({"error": "Code not found"}), status.HTTP_401_UNAUTHORIZED
 
     tokens = ItmoId.get_access_token(code=code)
+
     if not tokens:
         return make_response({"error": "Tokens error"}), status.HTTP_401_UNAUTHORIZED
 
