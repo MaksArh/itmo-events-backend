@@ -17,6 +17,7 @@ def check_auth(handle):
             stat = verify(access_token)
             if stat["status"] == "ok":
                 # payload = stat["payload"]
+                # print(payload)
                 pass
             else:
                 return stat["status"], 404

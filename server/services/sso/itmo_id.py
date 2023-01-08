@@ -19,7 +19,7 @@ class ItmoId:
 
         address = "https://id.itmo.ru/auth/realms/itmo/protocol/openid-connect/auth"
         address += f"?client_id={client_id}" \
-                   f"&response_type='code'" \
+                   f"&response_type=code" \
                    f"&redirect_uri={redirect_uri}" \
                    f"&scope={scope}"
 
@@ -31,15 +31,17 @@ class ItmoId:
         Получение Access Token
         POST https://id.itmo.ru/auth/realms/itmo/protocol/openid-connect/token
         """
-
         address = "https://id.itmo.ru/auth/realms/itmo/protocol/openid-connect/token"
-        address += f"?client_id={client_id}" \
-                   f"&client_secret={client_secret}" \
-                   f"&grant_type='authorization_code'" \
-                   f"&redirect_uri={redirect_uri}" \
-                   f"&code={code}"
 
-        return redirect(location=address, code=302)
+        data = {"client_id": client_id,
+                "client_secret": client_secret,
+                "grant_type": "authorization_code",
+                "redirect_uri": redirect_uri,
+                "code": code}
+
+        response = requests.post(address, data=data)
+
+        return response.json()
 
     @staticmethod
     def get_user_info():

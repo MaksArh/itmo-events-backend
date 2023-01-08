@@ -4,11 +4,12 @@ from flask import request
 from typing import Tuple
 from starlette import status
 
-from server import info_logger, error_logger
+from configurations.config import LEN_ERR_MSG
 
 from data_base.base import engine, session
 from data_base.tbl_workers import NewsWorker
 
+from server import info_logger, error_logger
 from server.services.sso.auth import check_auth
 
 
@@ -28,8 +29,8 @@ class NewsHandler:
             info_logger.info(f"News with id: {request.json.get('header')} added.")
             return flask.make_response("News added"), status.HTTP_200_OK
         except Exception as E:
-            error_logger.error(E, request.json)
-            return flask.make_response({"error": str(E)}), status.HTTP_500_INTERNAL_SERVER_ERROR
+            error_logger.error(E)
+            return flask.make_response({"error": str(E)[:LEN_ERR_MSG] + " ..."}), status.HTTP_500_INTERNAL_SERVER_ERROR
 
     @check_auth
     @staticmethod
@@ -44,8 +45,8 @@ class NewsHandler:
             return (flask.make_response({"news": news}), status.HTTP_200_OK) if news \
                 else (flask.make_response({"error": "Not news"}), status.HTTP_400_BAD_REQUEST)
         except Exception as E:
-            error_logger.error(E, request.json)
-            return flask.make_response({"error": str(E)}), status.HTTP_500_INTERNAL_SERVER_ERROR
+            error_logger.error(E)
+            return flask.make_response({"error": str(E)[:LEN_ERR_MSG] + " ..."}), status.HTTP_500_INTERNAL_SERVER_ERROR
 
     @check_auth
     @staticmethod
@@ -60,8 +61,8 @@ class NewsHandler:
             return (flask.make_response({'news': news}), status.HTTP_200_OK) if news \
                 else (flask.make_response({"error": "Not news"}), status.HTTP_400_BAD_REQUEST)
         except Exception as E:
-            error_logger.error(E, request.json)
-            return flask.make_response({"error": str(E)}), status.HTTP_500_INTERNAL_SERVER_ERROR
+            error_logger.error(E)
+            return flask.make_response({"error": str(E)[:LEN_ERR_MSG] + " ..."}), status.HTTP_500_INTERNAL_SERVER_ERROR
 
     @check_auth
     @staticmethod
@@ -77,12 +78,13 @@ class NewsHandler:
         """
         try:
             with session(bind=engine) as local_session:
-                NewsWorker.update(int(request.json.get('news_id')), request.json.get('news_data_to_update'), local_session)
+                NewsWorker.update(int(request.json.get('news_id')), request.json.get('news_data_to_update'),
+                                  local_session)
             info_logger.info(f"News with id:{int(request.json['news_id'])} updated!")
             return flask.make_response("News updated"), status.HTTP_200_OK
         except Exception as E:
-            error_logger.error(E, request.json)
-            return flask.make_response({"error": str(E)}), status.HTTP_500_INTERNAL_SERVER_ERROR
+            error_logger.error(E)
+            return flask.make_response({"error": str(E)[:LEN_ERR_MSG] + " ..."}), status.HTTP_500_INTERNAL_SERVER_ERROR
 
     @check_auth
     @staticmethod
@@ -97,5 +99,5 @@ class NewsHandler:
             info_logger.info(f"News with id: {int(request.json.get('news_id'))} deleted.")
             return flask.make_response("News deleted"), status.HTTP_200_OK
         except Exception as E:
-            error_logger.error(E, request.json)
-            return flask.make_response({"error": str(E)}), status.HTTP_500_INTERNAL_SERVER_ERROR
+            error_logger.error(E)
+            return flask.make_response({"error": str(E)[:LEN_ERR_MSG] + " ..."}), status.HTTP_500_INTERNAL_SERVER_ERROR

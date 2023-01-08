@@ -47,6 +47,8 @@ class DefaultSettings(BaseSettings):
     TBL_NEWS = environ.get("TBL_NEWS", "news")
     TBL_SSO_PUB_KEY = environ.get("TBL_SSO_PUB_KEY", "sso_pub_key")
 
+
+
     @property
     def database_settings(self) -> dict:
         """

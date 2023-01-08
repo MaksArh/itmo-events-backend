@@ -3,6 +3,8 @@ from flask import request
 from typing import Tuple
 from starlette import status
 
+from configurations.config import LEN_ERR_MSG
+
 from data_base.tbl_workers import UserWorker
 from data_base.base import engine, session
 
@@ -40,8 +42,8 @@ class UserHandler:
             info_logger.info(f'User {request.json["user_name"]} added')
             return flask.make_response("User added"), status.HTTP_200_OK
         except Exception as E:
-            error_logger.error(E, request.json)
-            return flask.make_response({"error": str(E)}), status.HTTP_500_INTERNAL_SERVER_ERROR
+            error_logger.error(E)
+            return flask.make_response({"error": str(E)[:LEN_ERR_MSG] + " ..."}), status.HTTP_500_INTERNAL_SERVER_ERROR
 
     @check_auth
     @staticmethod
@@ -55,8 +57,8 @@ class UserHandler:
                 user = UserWorker.get(int(request.args.get('user_isu_number')), local_session)
             return flask.make_response({"user": user}), status.HTTP_200_OK
         except Exception as E:
-            error_logger.error(E, request.json)
-            return flask.make_response({"error": str(E)}), status.HTTP_500_INTERNAL_SERVER_ERROR
+            error_logger.error(E)
+            return flask.make_response({"error": str(E)[:LEN_ERR_MSG] + " ..."}), status.HTTP_500_INTERNAL_SERVER_ERROR
 
     @check_auth
     @staticmethod
@@ -66,8 +68,8 @@ class UserHandler:
         try:
             pass
         except Exception as E:
-            error_logger.error(E, request.json)
-            return flask.make_response({"error": str(E)}), status.HTTP_500_INTERNAL_SERVER_ERROR
+            error_logger.error(E)
+            return flask.make_response({"error": str(E)[:LEN_ERR_MSG] + " ..."}), status.HTTP_500_INTERNAL_SERVER_ERROR
 
     @check_auth
     @staticmethod
@@ -92,8 +94,8 @@ class UserHandler:
             info_logger.info(f"User with isu:{int(request.json['user_isu_number'])} updated!")
             return flask.make_response("User data updated"), status.HTTP_200_OK
         except Exception as E:
-            error_logger.error(E, request.json)
-            return flask.make_response({"error": str(E)}), status.HTTP_500_INTERNAL_SERVER_ERROR
+            error_logger.error(E)
+            return flask.make_response({"error": str(E)[:LEN_ERR_MSG] + " ..."}), status.HTTP_500_INTERNAL_SERVER_ERROR
 
     @check_auth
     @staticmethod
@@ -108,5 +110,5 @@ class UserHandler:
             info_logger.info(f"User with isu: {int(request.json.get('user_isu_number'))} deleted.")
             return flask.make_response("OK"), status.HTTP_200_OK
         except Exception as E:
-            error_logger.error(E, request.json)
-            return flask.make_response({"error": str(E)}), status.HTTP_500_INTERNAL_SERVER_ERROR
+            error_logger.error(E)
+            return flask.make_response({"error": str(E)[:LEN_ERR_MSG] + " ..."}), status.HTTP_500_INTERNAL_SERVER_ERROR

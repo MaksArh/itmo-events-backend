@@ -65,7 +65,7 @@ def verify(access_token: str):
     res = key.verify(bytes(message, "UTF-8"), decoded_sig)
     if res:
         try:
-            payload = jwt.decode(jwt=access_token, key=key.to_pem().decode(), algorithms='RS256', audience=client_id)  # with PEM key
+            payload = jwt.decode(jwt=access_token, key=key.to_pem().decode(), algorithms=["RS256"])
             return {"status": "ok", "payload": payload}
 
         except jwt.exceptions.ExpiredSignatureError:
