@@ -29,7 +29,7 @@ class SsoPubKeyWorker(SsoPubKey):
         local_session.add(SsoPubKeyWorker(sso_pub_key_to_add))
 
     @staticmethod
-    def get(local_session: session, kid: str):
+    def get(kid: str, local_session: session):
         sso_pub_key = local_session.query(SsoPubKeyWorker).filter(SsoPubKeyWorker.kid == kid).first()
         if sso_pub_key:
             return SsoPubKeyWorker.get_dict(sso_pub_key)
