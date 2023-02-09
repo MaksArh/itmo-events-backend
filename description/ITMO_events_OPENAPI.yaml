@@ -4,6 +4,20 @@ info:
   title: Itmo Events
   version: "1.0"
 paths:
+  /api/login:
+    get:
+      tags:
+        - Login
+      description: |
+        Login in app
+      responses:
+        "200":
+          description: Ok
+        "400":
+          description: Error
+###########################################
+#                   Health
+###########################################
   /api/health/app:
     get:
       tags:
