@@ -4,6 +4,9 @@ info:
   title: Itmo Events
   version: "1.0"
 paths:
+  ###########################################
+  #                   Login
+  ###########################################
   /api/login:
     get:
       tags:
