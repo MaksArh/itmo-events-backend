@@ -5,6 +5,7 @@ from flask import Flask
 from starlette import status
 
 from server.handlers.login_handler import login
+from server.handlers.index import index
 from server.handlers.health_handler import HealthHandler
 
 from server.handlers.user_handler import UserHandler
@@ -18,13 +19,9 @@ app = Flask(__name__)
 sys.path.append('../')
 
 
-@app.route('/api/')
-def index():
-
-    return "Hi", status.HTTP_200_OK
-
-
 def api_add_url():
+    app.add_url_rule("/api/", view_func=index)
+
     # ----------------------------------HEALTH-----------------------------------
     app.add_url_rule("/api/health/app", view_func=HealthHandler.health_app)
     app.add_url_rule("/api/health/db", view_func=HealthHandler.health_db)
