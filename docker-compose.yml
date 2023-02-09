@@ -14,9 +14,9 @@ services:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     expose:
-      - "5430"
+      - "5432"
     ports:
-      - "5430:5432"
+      - "5432:5432"
     restart: always
 
   web:
