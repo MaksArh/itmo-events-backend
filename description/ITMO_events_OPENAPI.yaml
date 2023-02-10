@@ -59,7 +59,7 @@ paths:
             description: User added
           "400":
             description: User not added
-  /api/user/get/{user_id}:
+  /api/user/get/{user_isu_number}:
     get:
         tags:
           - User
@@ -68,7 +68,7 @@ paths:
         parameters:
         - description: User ID
           in: path
-          name: user_id
+          name: user_isu_number
           required: true
           schema:
             type: integer
@@ -95,7 +95,7 @@ paths:
             description: User updated
           "400":
             description: User not updated
-  /api/user/delete/{user_id}:
+  /api/user/delete/{user_isu_number}:
     delete:
         tags:
           - User
@@ -104,7 +104,7 @@ paths:
         parameters:
         - description: User ID
           in: path
-          name: user_id
+          name: user_isu_number
           required: true
           schema:
             type: integer

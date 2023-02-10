@@ -49,7 +49,7 @@ class UserHandler:
     @staticmethod
     def user_get_profile() -> Tuple[flask.Response, int]:
         """
-        request.json = {"user_id": int(user_id)}
+        request.json = {"user_isu_number": int(user_isu_number)}
         :return: flask.Response({"user": dict(user)}), int(status_code)
         """
         try:
@@ -101,7 +101,7 @@ class UserHandler:
     @staticmethod
     def user_delete() -> Tuple[flask.Response, int]:
         """
-        request.json = {"user_id": int(user_id)}
+        request.json = {"user_isu_number": int(user_isu_number)}
         :return: flask.Response("User deleted"), int(status_code)
         """
         try:
