@@ -1,5 +1,5 @@
 import requests
-from flask import redirect
+from quart import redirect
 
 from server import info_logger, error_logger
 
@@ -11,7 +11,7 @@ from server.services.sso.env_params import client_id, client_secret, redirect_ur
 class ItmoId:
 
     @staticmethod
-    def get_code_auth():
+    async def get_code_auth():
         """
         Получение кода авторизации
         GET https://id.itmo.ru/auth/realms/itmo/protocol/openid-connect/auth
@@ -100,7 +100,7 @@ class ItmoId:
 if __name__ == "__main__":
     # ItmoId.get_access_token()
     # ItmoId.get_code_auth()
-    ItmoId.add_pub_keys()
+    # ItmoId.add_pub_keys()
     # print(ItmoId.leave_sso())
     # print(ItmoId.get_user_info())
     pass

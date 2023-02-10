@@ -17,7 +17,7 @@ delay = config.TIME_TO_CHECK
 class Checker:
 
     @staticmethod
-    def is_correct_mail(mail_address: str) -> bool:
+    async def is_correct_mail(mail_address: str) -> bool:
         regex_mail = re.compile(config.REGEX_MAIL)
         if re.fullmatch(regex_mail, mail_address):
             return True
@@ -25,7 +25,7 @@ class Checker:
             return False
 
     @staticmethod
-    def is_correct_phone(phone: str) -> bool:
+    async def is_correct_phone(phone: str) -> bool:
         # regex_phone = re.compile(config.REGEX_PHONE)
         regex_phone = re.compile(r"\d{10}")
 
@@ -34,7 +34,7 @@ class Checker:
         return False
 
     @staticmethod
-    def is_event_active(event_id: int, local_session: session) -> bool:
+    async def is_event_active(event_id: int, local_session: session) -> bool:
         time_now = datetime.now()
         event_time_start = datetime.strptime(EventWorker.get(local_session=local_session,
                                                              event_id=event_id)['time_start'], "%m/%d/%Y, %H:%M:%S")
@@ -45,7 +45,7 @@ class Checker:
             return False
 
     @staticmethod
-    def is_user_banned(user_id: int, local_session: session) -> bool:
+    async def is_user_banned(user_id: int, local_session: session) -> bool:
         # with session(bind=engine) as local_session:
         user_ban = UserWorker.get(user_id, local_session)['ban_date']
 
@@ -57,7 +57,7 @@ class Checker:
         return False
 
     @staticmethod
-    def is_event_opened_for_want(event_id: int, local_session: session) -> bool:
+    async def is_event_opened_for_want(event_id: int, local_session: session) -> bool:
         """
         Check that event in period time for registration.\n
         :param local_session: session
@@ -79,7 +79,7 @@ class Checker:
             return False
 
     @staticmethod
-    def is_user_can_apply_event(user_id: int, local_session: session) -> bool:
+    async def is_user_can_apply_event(user_id: int, local_session: session) -> bool:
         """
         Check user has time on apply. User must have got notify.\n
         Notify gives time on make choice.\n
@@ -98,7 +98,7 @@ class Checker:
         return False
 
     @staticmethod
-    def is_user_on_event_want(user_id: int, event_id: int, local_session: session) -> bool:
+    async def is_user_on_event_want(user_id: int, event_id: int, local_session: session) -> bool:
         event = EventWorker.get(local_session=local_session, event_id=event_id)
 
         if event:
@@ -111,7 +111,7 @@ class Checker:
             return False
 
     @staticmethod
-    def is_user_on_event_go(user_id: int, event_id: int, local_session: session) -> bool:
+    async def is_user_on_event_go(user_id: int, event_id: int, local_session: session) -> bool:
         """
         Check user in event field 'users_id_go'.\n
         :param local_session: session
@@ -130,7 +130,7 @@ class Checker:
             return False
 
     @staticmethod
-    def is_any_free_places_event(event_id: int, local_session: session) -> bool:
+    async def is_any_free_places_event(event_id: int, local_session: session) -> bool:
         event = EventWorker.get(local_session=local_session, event_id=event_id, all_events=False)
         users_id_go = event['users_id_go']
         free_places = int(event['people_count']) - len(users_id_go)

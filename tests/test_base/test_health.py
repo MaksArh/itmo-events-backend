@@ -6,13 +6,13 @@ from sqlalchemy_utils import database_exists
 
 class TestHealth:
     def test_ping_app(self, get_base_url):
-        method = "/health_app"
+        method = "/health/app"
         response = requests.get(get_base_url + method)
 
         assert response.status_code == status.HTTP_200_OK
 
     def test_ping_db(self, get_base_url):
-        method = "/health_db"
+        method = "/health/db"
         response = requests.get(get_base_url + method)
 
         # db_uri = get_db_uri

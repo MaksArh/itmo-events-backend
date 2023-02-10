@@ -1,7 +1,7 @@
 import sys
 from os import environ
 
-from flask import Flask
+from quart import Quart
 from starlette import status
 
 from server.handlers.login_handler import login
@@ -15,7 +15,7 @@ from server.handlers.news_handler import NewsHandler
 from server.handlers.decision_handler import DecisionHandler
 
 
-app = Flask(__name__)
+app = Quart(__name__)
 sys.path.append('../')
 
 

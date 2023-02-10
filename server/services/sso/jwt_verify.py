@@ -12,7 +12,7 @@ from server.services.sso.itmo_id import ItmoId
 from data_base.tbl_workers.sso_pub_key_worker import SsoPubKeyWorker
 
 
-def get_key(header):
+async def get_key(header):
     # берём хэдер, расшифровываем и смотрим есть ли в бд открытый ключ
     try:
         decoded_header_bytes = base64url_decode(header + '=' * (4 - len(header) % 4))
@@ -33,7 +33,7 @@ def get_key(header):
         with session(bind=engine) as local_session:
             SsoPubKeyWorker.delete(kid=kid, local_session=local_session)
 
-        ItmoId.add_pub_keys()
+        await ItmoId.add_pub_keys()
 
         with session(bind=engine) as local_session:
             db_key = SsoPubKeyWorker.get(kid=kid, local_session=local_session)
@@ -42,17 +42,16 @@ def get_key(header):
     return {'status': 'ok', 'rsa_key': db_key}
 
 
-def verify(access_token: str):
+async def verify(access_token: str):
     # расшифровать первую чаcть токена, сверить kid и затем осуществить проверку JWS с данным ключем (kid) если все
     # успешно отдать ок и пэйлоад
-
     if access_token.count('.') != 2:
         return {"status": "Invalid token"}
 
     message, encoded_sig = access_token.rsplit('.', 1)
     encoded_header = access_token.split('.', 1)[0]
 
-    get_key_result = get_key(encoded_header)
+    get_key_result = await get_key(encoded_header)
     if get_key_result['status'] == 'false':
         return {"status": "Server does not have this token key id (kid) in the cache"}
     elif get_key_result['status'] == 'Invalid token':
@@ -74,5 +73,4 @@ def verify(access_token: str):
             return {"status": "Something goes wrong with verifying itmo id JWT in jwt_verify.py"}
     else:
         return {"status": "Not verified"}
-
 

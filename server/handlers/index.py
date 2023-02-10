@@ -1,9 +1,10 @@
+import quart
 from starlette import status
 
 from server.services.sso.auth import check_auth
 
 
 @check_auth
-def index():
+async def index():
 
-    return "Hi", status.HTTP_200_OK
+    return await quart.make_response("Hi"), status.HTTP_200_OK
