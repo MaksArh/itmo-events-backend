@@ -261,7 +261,7 @@ paths:
         - description: News ID
           in: path
           name: news_id
-          required: true
+          required: false
           schema:
             type: integer
             format: id
