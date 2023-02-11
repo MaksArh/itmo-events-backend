@@ -4,17 +4,6 @@ info:
   title: Itmo Events
   version: "1.0"
 paths:
-  /api/login:
-    get:
-      tags:
-        - Login
-      description: |
-        Login in app
-      responses:
-        "200":
-          description: Ok
-        "400":
-          description: Error
 ###########################################
 #                   Health
 ###########################################
@@ -43,7 +32,7 @@ paths:
 ###########################################
 #                   User
 ###########################################
-  /api/user/add:
+  /api/user/:
     post:
         tags:
           - User
@@ -59,7 +48,6 @@ paths:
             description: User added
           "400":
             description: User not added
-  /api/user/get/{user_isu_number}:
     get:
         tags:
           - User
@@ -79,8 +67,7 @@ paths:
             description: User data
           "400":
             description: Error
-  /api/user/update:
-    post:
+    put:
         tags:
           - User
         description: |
@@ -95,7 +82,6 @@ paths:
             description: User updated
           "400":
             description: User not updated
-  /api/user/delete/{user_isu_number}:
     delete:
         tags:
           - User
@@ -119,7 +105,7 @@ paths:
 ###########################################
 #                   Event
 ###########################################
-  /api/event/add:
+  /api/event:
     post:
         tags:
           - Event
@@ -135,7 +121,6 @@ paths:
             description: Event added
           "400":
             description: Event not added
-  /api/event/get/{event_id}:
     get:
         tags:
           - Event
@@ -145,30 +130,24 @@ paths:
         - description: Event ID
           in: path
           name: event_id
-          required: true
+          required: false
           schema:
             type: integer
             format: id
           example: "12"
+        - description: Get all events or not
+          in: path
+          name: all
+          required: false
+          schema:
+            type: boolean
+          example: False
         responses:
           "200":
             description: Event data
           "400":
             description: Error
-  /api/event/get_all:
-    get:
-        tags:
-          - Event
-        description: |
-          Get all events
-        
-        responses:
-          "200":
-            description: Event data
-          "400":
-            description: Error
-  /api/event/update:
-    post:
+    put:
         tags:
           - Event
         description: |
@@ -183,7 +162,6 @@ paths:
             description: Event updated
           "400":
             description: Event not updated
-  /api/event/delete/{event_id}:
     delete:
         tags:
           - Event
@@ -207,7 +185,7 @@ paths:
 ###########################################
 #                   Notify
 ###########################################
-  /api/notify/add:
+  /api/notify:
     post:
         tags:
           - Notify
@@ -223,6 +201,25 @@ paths:
             description: Notify added
           "400":
             description: Notify not added
+    delete:
+      tags:
+        - Notify
+      description: |
+        Delete notify
+      parameters:
+        - description: Notify ID
+          in: path
+          name: notify_id
+          required: true
+          schema:
+            type: integer
+            format: id
+          example: "12"
+      responses:
+        "200":
+          description: Notify deleted
+        "400":
+          description: Notify not deleted
   /api/notify/send:
     post:
         tags:
@@ -235,31 +232,11 @@ paths:
             description: Notify was sent to user
           "400":
             description: Error
-  /api/notify/delete/{notify_id}:
-    delete:
-        tags:
-          - Notify
-        description: |
-          Delete notify
-        parameters:
-        - description: Notify ID
-          in: path
-          name: notify_id
-          required: true
-          schema:
-            type: integer
-            format: id
-          example: "12"
-        responses:
-          "200":
-            description: Notify deleted
-          "400":
-            description: Notify not deleted
 
 ###########################################
 #                   News
 ###########################################
-  /api/news/add:
+  /api/news:
     post:
         tags:
           - News
@@ -275,7 +252,6 @@ paths:
             description: News added
           "400":
             description: News not added
-  /api/news/get/{news_id}:
     get:
         tags:
           - News
@@ -290,25 +266,19 @@ paths:
             type: integer
             format: id
           example: "12"
+        - description: Get all news or not
+          in: path
+          name: all
+          required: false
+          schema:
+            type: boolean
+          example: False
         responses:
           "200":
             description: News data
           "400":
             description: Error
-  /api/news/get_all:
-    get:
-        tags:
-          - News
-        description: |
-          Get all news
-        
-        responses:
-          "200":
-            description: News data
-          "400":
-            description: Error
-  /api/news/update:
-    post:
+    put:
         tags:
           - News
         description: |
@@ -323,7 +293,6 @@ paths:
             description: News updated
           "400":
             description: News not updated
-  /api/news/delete/{news_id}:
     delete:
         tags:
           - News

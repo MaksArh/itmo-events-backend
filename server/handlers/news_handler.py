@@ -42,40 +42,18 @@ class NewsHandler:
     @check_auth
     @staticmethod
     async def news_get() -> Tuple[quart.Response, int]:
-        """
-        request.json = {"news_id": int(news_id)}
-        :return: quart.Response({"news": dict(news)}), int(status_code)
-        """
         session = await get_session()
+        data = request.args
+
+        news_id = data.get('news_id', None)
+        is_all = data.get('all', None)
 
         try:
             async with session() as local_session:
-                news = await NewsWorker.get(local_session, news_id=(request.args.get('news_id', 0)), all_news=False)
+                news = await NewsWorker.get(local_session, news_id=news_id, all_news=is_all)
                 await local_session.commit()
 
-            return (await quart.make_response({"news": news}), status.HTTP_200_OK) if news \
-                else (await quart.make_response({"error": "Not news"}), status.HTTP_400_BAD_REQUEST)
-        except Exception as E:
-            error_logger.error(E)
-            return await quart.make_response(
-                {"error": str(E)[:LEN_ERR_MSG] + " ..."}), status.HTTP_500_INTERNAL_SERVER_ERROR
-
-    @check_auth
-    @staticmethod
-    async def news_get_all() -> Tuple[quart.Response, int]:
-        """
-        request.json = {}
-        :return: quart.Response({"news": list(dict(news))}), status_code: int
-        """
-        session = await get_session()
-
-        try:
-            async with session() as local_session:
-                news = await NewsWorker.get(local_session, all_news=True)
-                await local_session.commit()
-
-            return (await quart.make_response({'news': news}), status.HTTP_200_OK) if news \
-                else (await quart.make_response({"error": "Not news"}), status.HTTP_400_BAD_REQUEST)
+            return await quart.make_response({"news": news}), status.HTTP_200_OK
         except Exception as E:
             error_logger.error(E)
             return await quart.make_response(

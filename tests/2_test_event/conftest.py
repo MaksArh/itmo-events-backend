@@ -4,8 +4,6 @@ from datetime import datetime, timedelta
 
 
 def generate_event_time() -> dict:
-    # time_start = "09/25/2022, 00:01:10"
-    # time_end = "09/25/2022, 00:01:10"
     time_start = datetime.now() - timedelta(1)
     time_end = datetime.now() + timedelta(9)
     time = {"time_start": str(time_start),

@@ -2,7 +2,6 @@ import sys
 from os import environ
 
 from quart import Quart
-from starlette import status
 
 from server.handlers.login_handler import login
 from server.handlers.index import index
@@ -30,29 +29,27 @@ def api_add_url():
     app.add_url_rule("/api/login", view_func=login)
 
     # ----------------------------------USER-----------------------------------
-    app.add_url_rule("/api/user/add", view_func=UserHandler.user_add, methods=["POST"])
-    app.add_url_rule("/api/user/get", view_func=UserHandler.user_get_profile, methods=["GET"])
-    app.add_url_rule("/api/user/update", view_func=UserHandler.user_update, methods=["POST"])
-    app.add_url_rule("/api/user/delete", view_func=UserHandler.user_delete, methods=["DELETE"])
+    app.add_url_rule("/api/user", view_func=UserHandler.user_add, methods=["POST"])
+    app.add_url_rule("/api/user", view_func=UserHandler.user_get_profile, methods=["GET"])
+    app.add_url_rule("/api/user", view_func=UserHandler.user_update, methods=["PUT"])
+    app.add_url_rule("/api/user", view_func=UserHandler.user_delete, methods=["DELETE"])
 
     # ----------------------------------EVENT----------------------------------
-    app.add_url_rule("/api/event/add", view_func=EventHandler.event_add, methods=["POST"])
-    app.add_url_rule("/api/event/get", view_func=EventHandler.event_get, methods=["GET"])
-    app.add_url_rule("/api/event/get_all", view_func=EventHandler.event_get_all, methods=["GET"])
-    app.add_url_rule("/api/event/update", view_func=EventHandler.event_update, methods=["POST"])
-    app.add_url_rule("/api/event/delete", view_func=EventHandler.event_delete, methods=["DELETE"])
+    app.add_url_rule("/api/event", view_func=EventHandler.event_add, methods=["POST"])
+    app.add_url_rule("/api/event", view_func=EventHandler.event_get, methods=["GET"])
+    app.add_url_rule("/api/event", view_func=EventHandler.event_update, methods=["PUT"])
+    app.add_url_rule("/api/event", view_func=EventHandler.event_delete, methods=["DELETE"])
 
     # ---------------------------------NOTIFY----------------------------------
-    app.add_url_rule("/api/notify/add", view_func=NotifyHandler.notify_add, methods=["POST"])
+    app.add_url_rule("/api/notify", view_func=NotifyHandler.notify_add, methods=["POST"])
     app.add_url_rule("/api/notify/send", view_func=NotifyHandler.notify_send, methods=["POST"])
-    app.add_url_rule("/api/notify/delete", view_func=NotifyHandler.notify_delete, methods=["DELETE"])
+    app.add_url_rule("/api/notify", view_func=NotifyHandler.notify_delete, methods=["DELETE"])
 
     # ----------------------------------NEWS-----------------------------------
-    app.add_url_rule("/api/news/add", view_func=NewsHandler.news_add, methods=["POST"])
-    app.add_url_rule("/api/news/get", view_func=NewsHandler.news_get, methods=["GET"])
-    app.add_url_rule("/api/news/get_all", view_func=NewsHandler.news_get_all, methods=["GET"])
-    app.add_url_rule("/api/news/update", view_func=NewsHandler.news_update, methods=["POST"])
-    app.add_url_rule("/api/news/delete", view_func=NewsHandler.news_delete, methods=["DELETE"])
+    app.add_url_rule("/api/news", view_func=NewsHandler.news_add, methods=["POST"])
+    app.add_url_rule("/api/news", view_func=NewsHandler.news_get, methods=["GET"])
+    app.add_url_rule("/api/news", view_func=NewsHandler.news_update, methods=["PUT"])
+    app.add_url_rule("/api/news", view_func=NewsHandler.news_delete, methods=["DELETE"])
 
     # --------------------------------Decision---------------------------------
     app.add_url_rule("/api/event_registration", view_func=DecisionHandler.event_registration, methods=["POST"])

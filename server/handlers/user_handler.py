@@ -43,7 +43,7 @@ class UserHandler:
             async with session() as local_session:
                 await UserWorker.add(data, local_session)
                 await local_session.commit()
-            info_logger.info(f'User {data.get("user_name")} added')
+            info_logger.info(f"User {data.get('user_name')} added")
             return await quart.make_response("User added"), status.HTTP_200_OK
         except Exception as E:
             error_logger.error(E)

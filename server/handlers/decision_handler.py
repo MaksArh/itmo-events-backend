@@ -27,17 +27,23 @@ class DecisionHandler:
                 if not event_id or not user_isu_number:
                     return await quart.make_response(
                         {"API-error": "invalid user_id or/and event_id"}), status.HTTP_400_BAD_REQUEST
-                if not await UserWorker.get(user_isu_number, local_session):
+                if not await UserWorker.get(user_isu_number=user_isu_number, local_session=local_session):
+                    info_logger.error(f"User: {user_isu_number} does not exist")
                     return await quart.make_response({"error": "User does not exist"}), status.HTTP_400_BAD_REQUEST
                 if not await EventWorker.get(event_id=event_id, all_events=False, local_session=local_session):
+                    info_logger.error(f"Event: {event_id} does not exist")
                     return await quart.make_response({"error": "Event does not exist"}), status.HTTP_400_BAD_REQUEST
-                if await Checker.is_user_banned(user_isu_number, local_session):
+                if await Checker.is_user_banned(user_isu_number=user_isu_number, local_session=local_session):
+                    info_logger.error(f"User: {user_isu_number} have been banned")
                     return await quart.make_response({"error": "User have been banned"}), status.HTTP_400_BAD_REQUEST
-                if not await Checker.is_event_opened_for_want(event_id, local_session):
+                if not await Checker.is_event_opened_for_want(event_id=event_id, local_session=local_session):
+                    info_logger.error(f"Event: {event_id} close for registration")
                     return await quart.make_response(
                         {"error": "Event close for registration"}), status.HTTP_400_BAD_REQUEST
                 if not await Checker.is_user_on_event_want(user_isu_number, event_id, local_session) == cancel:
-                    return await quart.make_response({"error": "Not available response"}), status.HTTP_400_BAD_REQUEST
+                    info_logger.error(f"User: {user_isu_number} made not available request")
+                    return await quart.make_response(
+                        {"error": "Not available request for this user"}), status.HTTP_400_BAD_REQUEST
 
                 if cancel:
                     await EventWorker.update_del_users_id_want(event_id, user_isu_number, local_session)
@@ -104,8 +110,10 @@ class DecisionHandler:
 
             async with session() as local_session:
                 if not await UserWorker.get(user_isu_number=user_isu_number, local_session=local_session):
+                    info_logger.error(f"User: {user_isu_number} does not exist")
                     return await quart.make_response({"error": "User does not exist"}), status.HTTP_400_BAD_REQUEST
-                if not await EventWorker.get(local_session=local_session, event_id=event_id):
+                if not await EventWorker.get(event_id=event_id, local_session=local_session):
+                    info_logger.error(f"Event: {event_id} does not exist")
                     return await quart.make_response({"error": "Event does not exist"}), status.HTTP_400_BAD_REQUEST
 
                 if await Checker.is_user_can_apply_event(user_isu_number, local_session):
@@ -143,8 +151,10 @@ class DecisionHandler:
                     return await quart.make_response(
                         {"API-error": "invalid user_id or/and event_id"}), status.HTTP_400_BAD_REQUEST
                 if not await UserWorker.get(user_isu_number=user_isu_number, local_session=local_session):
+                    info_logger.error(f"User: {user_isu_number} does not exist")
                     return await quart.make_response({"error": "User does not exist"}), status.HTTP_400_BAD_REQUEST
                 if not await EventWorker.get(event_id=event_id, local_session=local_session):
+                    info_logger.error(f"Event: {event_id} does not exist")
                     return await quart.make_response({"error": "Event does not exist"}), status.HTTP_400_BAD_REQUEST
 
                 if await Checker.is_user_on_event_go(user_isu_number, event_id, local_session):

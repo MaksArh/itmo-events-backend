@@ -22,7 +22,7 @@ class NewsWorker(News):
         await local_session.execute(query)
 
     @staticmethod
-    async def get(local_session: get_session, news_id: int = 0, all_news: bool = False):
+    async def get(local_session: get_session, news_id: int = None, all_news: bool = None):
         if all_news:
             query = select(News).where()
             all_news = await local_session.execute(query)

@@ -41,14 +41,7 @@ class EventWorker(Event):
         await local_session.execute(query)
 
     @staticmethod
-    async def get(local_session: get_session, event_id: int = 0, all_events: bool = False):
-        """
-        SELECT * FROM EVENT (WHERE event_id = event_id);\n
-        :param local_session: session
-        :param event_id: int
-        :param all_events: bool
-        :return: list with event or events
-        """
+    async def get(local_session: get_session, event_id: int = None, all_events: bool = None):
         if all_events:
             query = select(Event).where()
             events = await local_session.execute(query)

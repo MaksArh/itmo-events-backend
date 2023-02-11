@@ -83,43 +83,21 @@ class EventHandler:
     @check_auth
     @staticmethod
     async def event_get() -> Tuple[quart.Response, int]:
-        """
-        request.json = {"event_id": int(event_id)}
-        :return: quart.Response({"event": event: dict}), status_code: int
-        """
         session = await get_session()
         data = request.args
 
+        event_id = data.get("event_id", None)
+        is_all = data.get("all", None)
+
         try:
             async with session() as local_session:
-                events = await EventWorker.get(local_session=local_session, event_id=int(data.get('event_id', 0))
-                                               , all_events=False)
+                events = await EventWorker.get(local_session=local_session, event_id=event_id, all_events=is_all)
 
                 await local_session.commit()
 
             return (await quart.make_response({"Result": events}), status.HTTP_200_OK) if events \
                 else (await quart.make_response({"Result": "Not events"}), status.HTTP_200_OK)
-        except Exception as E:
-            error_logger.error(E)
-            return await quart.make_response({"error": str(E)[:LEN_ERR_MSG] + " ..."}), \
-                   status.HTTP_500_INTERNAL_SERVER_ERROR
 
-    @check_auth
-    @staticmethod
-    async def event_get_all() -> Tuple[quart.Response, int]:
-        """
-        request.json = {}
-        :return: quart.Response({"events": list(dict(events))}), status_code: int
-        """
-        session = await get_session()
-
-        try:
-            async with session() as local_session:
-                events = await EventWorker.get(local_session=local_session, all_events=True)
-                await local_session.commit()
-
-            return (await quart.make_response({'events': events}), status.HTTP_200_OK) if events \
-                else (await quart.make_response({"events": {}}), status.HTTP_200_OK)
         except Exception as E:
             error_logger.error(E)
             return await quart.make_response({"error": str(E)[:LEN_ERR_MSG] + " ..."}), \

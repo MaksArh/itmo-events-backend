@@ -45,8 +45,8 @@ class Checker:
             return False
 
     @staticmethod
-    async def is_user_banned(user_id: int, local_session: get_session) -> bool:
-        user = await UserWorker.get(user_id, local_session)
+    async def is_user_banned(user_isu_number: int, local_session: get_session) -> bool:
+        user = await UserWorker.get(user_isu_number, local_session)
         user_ban = user.get('ban_date')
 
         if user_ban:
