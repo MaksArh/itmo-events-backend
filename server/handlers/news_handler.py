@@ -1,12 +1,13 @@
 import quart
 from quart import request
 
+import dateutil.parser
 from typing import Tuple
 from starlette import status
 
 from configurations.config import LEN_ERR_MSG
 
-from data_base.base import engine, session
+from data_base.base import get_session
 from data_base.tbl_workers import NewsWorker
 
 from server import info_logger, error_logger
@@ -23,10 +24,14 @@ class NewsHandler:
                         'time': str(timestamp)}
         :return: quart.Response("News added"), int(status_code)
         """
+        session = await get_session()
         data = await request.json
+        data["time"] = dateutil.parser.isoparse(data.get("time"))
         try:
-            with session(bind=engine) as local_session:
-                NewsWorker.add(data, local_session)
+            async with session() as local_session:
+                await NewsWorker.add(data, local_session)
+                await local_session.commit()
+
             info_logger.info(f"News with id: {data.get('header')} added.")
             return await quart.make_response("News added"), status.HTTP_200_OK
         except Exception as E:
@@ -41,9 +46,13 @@ class NewsHandler:
         request.json = {"news_id": int(news_id)}
         :return: quart.Response({"news": dict(news)}), int(status_code)
         """
+        session = await get_session()
+
         try:
-            with session(bind=engine) as local_session:
-                news = NewsWorker.get(local_session, news_id=(request.args.get('news_id', 0)), all_news=False)
+            async with session() as local_session:
+                news = await NewsWorker.get(local_session, news_id=(request.args.get('news_id', 0)), all_news=False)
+                await local_session.commit()
+
             return (await quart.make_response({"news": news}), status.HTTP_200_OK) if news \
                 else (await quart.make_response({"error": "Not news"}), status.HTTP_400_BAD_REQUEST)
         except Exception as E:
@@ -58,9 +67,13 @@ class NewsHandler:
         request.json = {}
         :return: quart.Response({"news": list(dict(news))}), status_code: int
         """
+        session = await get_session()
+
         try:
-            with session(bind=engine) as local_session:
-                news = NewsWorker.get(local_session, all_news=True)
+            async with session() as local_session:
+                news = await NewsWorker.get(local_session, all_news=True)
+                await local_session.commit()
+
             return (await quart.make_response({'news': news}), status.HTTP_200_OK) if news \
                 else (await quart.make_response({"error": "Not news"}), status.HTTP_400_BAD_REQUEST)
         except Exception as E:
@@ -80,11 +93,17 @@ class NewsHandler:
                         }
         :return: quart.Response("News updated"), int(status_code)
         """
+        session = await get_session()
+
         data = await request.json
+        data["news_data_to_update"]["time"] = dateutil.parser.isoparse(data.get("news_data_to_update").get("time"))
+
         try:
-            with session(bind=engine) as local_session:
-                NewsWorker.update(int(data.get('news_id')), data.get('news_data_to_update'),
-                                  local_session)
+            async with session() as local_session:
+                await NewsWorker.update(int(data.get('news_id')), data.get('news_data_to_update'),
+                                        local_session)
+                await local_session.commit()
+
             info_logger.info(f"News with id:{int(data.get('news_id'))} updated!")
             return await quart.make_response("News updated"), status.HTTP_200_OK
         except Exception as E:
@@ -99,10 +118,12 @@ class NewsHandler:
         request.json = {"news_id": int(news_id)}
         :return: quart.Response("News deleted"), int(status_code)
         """
+        session = await get_session()
         data = await request.json
         try:
-            with session(bind=engine) as local_session:
-                NewsWorker.delete(int(data.get('news_id')), local_session)
+            async with session() as local_session:
+                await NewsWorker.delete(int(data.get('news_id')), local_session)
+                await local_session.commit()
             info_logger.info(f"News with id: {int(data.get('news_id'))} deleted.")
             return await quart.make_response("News deleted"), status.HTTP_200_OK
         except Exception as E:

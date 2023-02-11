@@ -9,7 +9,7 @@ from configurations.config import LEN_ERR_MSG
 from server import info_logger, error_logger
 from server.services.sso.auth import check_auth
 
-from data_base.base import engine, session
+from data_base.base import get_session
 from data_base.tbl_workers import NotifyWorker
 from data_base.tbl_workers import UserWorker
 
@@ -24,10 +24,11 @@ class NotifyHandler:
                         'notify_data': str
         :return: quart.Response("Notify added"), int(status_code)
         """
+        session = await get_session()
         data = await request.json
         try:
-            with session(bind=engine) as local_session:
-                NotifyWorker.add(data, local_session)
+            async with session() as local_session:
+                await NotifyWorker.add(data, local_session)
             info_logger.info(f"Notify for event {data.get('event_id')} added.")
             return await quart.make_response("Notify added"), status.HTTP_200_OK
         except Exception as E:
@@ -40,13 +41,17 @@ class NotifyHandler:
     async def notify_send():
         # maybe I delete this API ! # TODO
         notifies = []
+        session = await get_session()
         data = await request.json
         try:
-            with session(bind=engine) as local_session:
-                notifies_id = UserWorker.get(data.get('user_id'), local_session)['notify_id']  # user's notifies
+            async with session() as local_session:
+                user = await UserWorker.get(data.get('user_id'), local_session)
+                await local_session.commit()
 
-                for notify_id in notifies_id:
-                    notifies.append(NotifyWorker.get(notify_id, local_session))  # list with notifies json
+            notifies_id = user.get('notify_id')  # user's notifies
+
+            for notify_id in notifies_id:
+                notifies.append(await NotifyWorker.get(notify_id, local_session))  # list with notifies json
 
             return notifies
         except Exception as E:
@@ -60,10 +65,13 @@ class NotifyHandler:
         request.json = {"notify_id": int(notify_id)}
         :return: quart.Response("Notify deleted"), int(status_code)
         """
+        session = await get_session()
         data = await request.json
         try:
-            with session(bind=engine) as local_session:
-                NotifyWorker.delete(int(data.get('notify_id')), local_session)
+            async with session() as local_session:
+                await NotifyWorker.delete(int(data.get('notify_id')), local_session)
+                await local_session.commit()
+
             info_logger.info(f"Notify with id: {int(data.get('notify_id'))} deleted.")
             return await quart.make_response("Notify deleted"), status.HTTP_200_OK
         except Exception as E:

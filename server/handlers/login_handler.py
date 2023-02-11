@@ -21,7 +21,7 @@ async def login():
     if not code:
         return await make_response({"error": "Code not found"}), status.HTTP_401_UNAUTHORIZED
 
-    tokens = ItmoId.get_access_token(code=code)
+    tokens = await ItmoId.get_access_token(code=code)
 
     if not tokens:
         return await make_response({"error": "Tokens error"}), status.HTTP_401_UNAUTHORIZED

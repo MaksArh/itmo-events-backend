@@ -5,7 +5,7 @@ import json
 import binascii
 import datetime
 
-from data_base.base import engine, session
+from data_base.base import get_session
 
 from server.services.sso.env_params import client_id
 from server.services.sso.itmo_id import ItmoId
@@ -25,18 +25,22 @@ async def get_key(header):
         return {'status': 'Invalid token'}
 
     kid = decoded_header['kid']
+    session = await get_session()
 
-    with session(bind=engine) as local_session:
-        db_key = SsoPubKeyWorker.get(kid=kid, local_session=local_session)
+    async with session() as local_session:
+        db_key = await SsoPubKeyWorker.get(kid=kid, local_session=local_session)
+        await local_session.commit()
 
-    if len(db_key) == 0 or datetime.datetime.now() - db_key["expires"] > datetime.timedelta(hours=10):
-        with session(bind=engine) as local_session:
-            SsoPubKeyWorker.delete(kid=kid, local_session=local_session)
+    if not db_key or datetime.datetime.now() - db_key["expires"] > datetime.timedelta(hours=10):
+        async with session() as local_session:
+            await SsoPubKeyWorker.delete(kid=kid, local_session=local_session)
+            await local_session.commit()
 
         await ItmoId.add_pub_keys()
 
-        with session(bind=engine) as local_session:
-            db_key = SsoPubKeyWorker.get(kid=kid, local_session=local_session)
+        async with session() as local_session:
+            db_key = await SsoPubKeyWorker.get(kid=kid, local_session=local_session)
+            await local_session.commit()
     if len(db_key) == 0:
         return {'status': 'false'}
     return {'status': 'ok', 'rsa_key': db_key}
@@ -62,9 +66,13 @@ async def verify(access_token: str):
 
     decoded_sig = base64url_decode(encoded_sig + '=' * (4 - len(encoded_sig) % 4))
     res = key.verify(bytes(message, "UTF-8"), decoded_sig)
+
     if res:
         try:
-            payload = jwt.decode(jwt=access_token, key=key.to_pem().decode(), algorithms=["RS256"])
+            jwt_access_token = access_token
+            key = key.to_pem().decode()
+
+            payload = jwt.decode(jwt=jwt_access_token, key=key, algorithms=["RS256"])
             return {"status": "ok", "payload": payload}
 
         except jwt.exceptions.ExpiredSignatureError:
@@ -73,4 +81,3 @@ async def verify(access_token: str):
             return {"status": "Something goes wrong with verifying itmo id JWT in jwt_verify.py"}
     else:
         return {"status": "Not verified"}
-

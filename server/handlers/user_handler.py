@@ -6,7 +6,7 @@ from starlette import status
 from configurations.config import LEN_ERR_MSG
 
 from data_base.tbl_workers import UserWorker
-from data_base.base import engine, session
+from data_base.base import get_session
 
 from server import info_logger, error_logger
 from server.services.checker import Checker
@@ -29,6 +29,8 @@ class UserHandler:
                         'is_russian_citizenship': bool}
         :return: quart.Response("User added"), int(status_code)
         """
+        session = await get_session()
+
         data = await request.json
 
         if not await Checker.is_correct_phone(data.get('phone')):
@@ -38,8 +40,9 @@ class UserHandler:
             error_logger.error("User add incorrect mail")
             return await quart.make_response({"error": "Wrong mail"}), status.HTTP_400_BAD_REQUEST
         try:
-            with session(bind=engine) as local_session:
+            async with session() as local_session:
                 await UserWorker.add(data, local_session)
+                await local_session.commit()
             info_logger.info(f'User {data.get("user_name")} added')
             return await quart.make_response("User added"), status.HTTP_200_OK
         except Exception as E:
@@ -54,9 +57,11 @@ class UserHandler:
         request.json = {"user_isu_number": int(user_isu_number)}
         :return: quart.Response({"user": dict(user)}), int(status_code)
         """
+        session = await get_session()
         try:
-            with session(bind=engine) as local_session:
+            async with session() as local_session:
                 user = await UserWorker.get(int(request.args.get('user_isu_number')), local_session)
+                await local_session.commit()
             return await quart.make_response({"user": user}), status.HTTP_200_OK
         except Exception as E:
             error_logger.error(E)
@@ -91,11 +96,15 @@ class UserHandler:
                             }}
         :return: quart.Response("User data updated"), int(status_code)
         """
+        session = await get_session()
+
         data = await request.json
         try:
-            with session(bind=engine) as local_session:
-                UserWorker.update(int(data.get('user_isu_number')), data.get('user_data_to_update'),
-                                  local_session)
+            async with session() as local_session:
+                await UserWorker.update(int(data.get('user_isu_number')), data.get('user_data_to_update'),
+                                        local_session)
+                await local_session.commit()
+
             info_logger.info(f"User with isu:{int(data.get('user_isu_number'))} updated!")
             return await quart.make_response("User data updated"), status.HTTP_200_OK
         except Exception as E:
@@ -110,10 +119,14 @@ class UserHandler:
         request.json = {"user_isu_number": int(user_isu_number)}
         :return: quart.Response("User deleted"), int(status_code)
         """
+        session = await get_session()
+
         data = await request.json
         try:
-            with session(bind=engine) as local_session:
-                UserWorker.delete(int(data.get('user_isu_number')), local_session)
+            async with session() as local_session:
+                await UserWorker.delete(int(data.get('user_isu_number')), local_session)
+                await local_session.commit()
+
             info_logger.info(f"User with isu: {int(data.get('user_isu_number'))} deleted.")
             return await quart.make_response("OK"), status.HTTP_200_OK
         except Exception as E:

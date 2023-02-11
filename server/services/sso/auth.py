@@ -11,10 +11,8 @@ def check_auth(handle):
     async def handle_work(*args, **kwargs):
         if jwt_verify:
             access_token = request.cookies.get("access_token")
-
             if not access_token:
                 return await ItmoId.get_code_auth(), 302
-
             stat = await verify(access_token)
             if stat["status"] == "ok":
                 # payload = stat["payload"]
