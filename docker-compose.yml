@@ -17,26 +17,26 @@ services:
       - ${POSTGRES_PORT}:5432
     restart: always
 
-#  web:
-#    container_name: web
-#    build: .
-#    ports:
-#      - "8080:8080"
-#    depends_on:
-#      - db
-#    links:
-#      - db
-#    restart: always
-#
-#
-#  controller:
-#    container_name: event_controller
-#    build: .
-##    environment:
-##      - DB_SERVER=kanban-postgres
-#    depends_on:
-#      - db
-#    links:
-#      - db
-#    restart: always
-#    command: python server/event_controller.py
+  web:
+    container_name: web
+    build: .
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    links:
+      - db
+    restart: always
+
+
+  controller:
+    container_name: event_controller
+    build: .
+#    environment:
+#      - DB_SERVER=kanban-postgres
+    depends_on:
+      - db
+    links:
+      - db
+    restart: always
+    command: python server/event_controller.py
