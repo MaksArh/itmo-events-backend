@@ -22,7 +22,7 @@ configVariables:
   TBL_NEWS: news
   TBL_TOKEN: token
   JWT_VERIFY: 1
-  REDIRECT_URI: https://events.itmo.space/login
+  REDIRECT_URI: https://events.itmo.space/api/login
   SCOPE: ""
 networkAccess:
   external:
