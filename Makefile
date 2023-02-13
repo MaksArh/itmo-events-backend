@@ -25,7 +25,7 @@ db_outer:
 	psql -h ${POSTGRES_HOST} -p ${POSTGRES_PORT_OUTER} -U ${POSTGRES_USER} ${POSTGRES_DB}
 
 db_inner:
-	psql -h ${POSTGRES_HOST} -p ${POSTGRES_PORT_INNER} -U ${POSTGRES_USER} ${POSTGRES_DB}
+	psql -h ${POSTGRES_HOST} -p ${POSTGRES_PORT} -U ${POSTGRES_USER} ${POSTGRES_DB}
 
 lint:  ##@Code Check code with pylint
 	poetry run python3 -m pylint $(CODE)

@@ -21,7 +21,7 @@ class DefaultSettings(BaseSettings):
     POSTGRES_DB: str = environ.get("POSTGRES_DB", "ITMO_Event")
     POSTGRES_HOST: str = environ.get("POSTGRES_HOST", "127.0.0.1")
     POSTGRES_USER: str = environ.get("POSTGRES_USER", "postgres")
-    POSTGRES_PORT: str = str(environ.get("POSTGRES_PORT_INNER", "5432"))
+    POSTGRES_PORT: str = str(environ.get("POSTGRES_PORT", "5432"))
     POSTGRES_PASSWORD: str = environ.get("POSTGRES_PASSWORD", "postgres")
 
     PATH_PREFIX: str = environ.get("PATH_PREFIX", "")  # api/v1
