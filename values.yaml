@@ -23,7 +23,7 @@ configVariables:
   TBL_TOKEN: token
   JWT_VERIFY: 1
   REDIRECT_URI: https://events.itmo.space/api/login
-  SCOPE: ""
+  SCOPE: "openid"
 networkAccess:
   external:
     enabled: true
