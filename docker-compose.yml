@@ -8,13 +8,13 @@ services:
     volumes:
       - ./data/db:/var/lib/postgresql/data
     environment:
-      - POSTGRES_PORT=${POSTGRES_PORT}
+      - POSTGRES_PORT=${POSTGRES_PORT_INNER}
       - POSTGRES_HOST=${POSTGRES_HOST}
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     ports:
-      - ${POSTGRES_PORT}:5432
+      - ${POSTGRES_PORT_OUTER}:5432
     restart: always
 
   web:

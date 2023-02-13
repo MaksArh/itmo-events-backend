@@ -9,7 +9,8 @@ vault:
     - name: POSTGRES_USER
     - name: POSTGRES_PASSWORD
     - name: POSTGRES_HOST
-    - name: POSTGRES_PORT
+    - name: POSTGRES_PORT_INNER
+    - name: POSTGRES_PORT_OUTER
     - name: CLIENT_ID
     - name: CLIENT_SECRET
 configVariables:
@@ -21,7 +22,7 @@ configVariables:
   TBL_NOTIFIES: notify
   TBL_NEWS: news
   TBL_TOKEN: token
-  JWT_VERIFY: 0
+  JWT_VERIFY: 1
   REDIRECT_URI: https://events.itmo.space/health_app
   SCOPE: ""
 networkAccess:

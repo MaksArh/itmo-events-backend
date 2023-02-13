@@ -95,8 +95,7 @@ class EventHandler:
 
                 await local_session.commit()
 
-            return (await quart.make_response({"Result": events}), status.HTTP_200_OK) if events \
-                else (await quart.make_response({"Result": "Not events"}), status.HTTP_200_OK)
+            return await quart.make_response({"events": events}), status.HTTP_200_OK
 
         except Exception as E:
             error_logger.error(E)
