@@ -47,20 +47,11 @@ class NewsWorker(News):
 
     @staticmethod
     async def update(news_id: int, news_data_to_update: dict, local_session: get_session):
-        query = update(News).where(News.news_id == news_id).values(news_data_to_update)
+        query = update(News).where(News.news_id == int(news_id)).values(news_data_to_update)
         await local_session.execute(query)
-
-        # news_to_update = await local_session.query(NewsWorker).filter(NewsWorker.news_id == news_id).first()
-        # if news_to_update:
-        #     news_to_update.header = news_data_to_update["header"]
-        #     news_to_update.data = news_data_to_update["data"]
-        #     news_to_update.time = news_data_to_update["time"]
-        #
-        # else:
-        #     info_logger.error(f'News {news_id} does not exist!')
 
     @staticmethod
     async def delete(news_id: int, local_session: get_session):
-        query = delete(News).where(News.news_id == news_id)
+        query = delete(News).where(News.news_id == int(news_id))
         await local_session.execute(query)
 

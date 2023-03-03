@@ -30,7 +30,7 @@ class NotifyWorker(Notify):
 
     @staticmethod
     async def get(notify_id: int, local_session: get_session):
-        query = select(Notify).where(Notify.notify_id == notify_id).limit(1)
+        query = select(Notify).where(Notify.notify_id == int(notify_id)).limit(1)
         notify = await local_session.execute(query)
         notify = notify.scalars().first()
 
@@ -41,7 +41,7 @@ class NotifyWorker(Notify):
 
     @staticmethod
     async def get_for_event(event_id: int, local_session: get_session):
-        query = select(Notify).where(Notify.event_id == event_id)
+        query = select(Notify).where(Notify.event_id == int(event_id))
         notifies = await local_session.execute(query)
         notifies = notifies.scalars().all
 
@@ -54,18 +54,10 @@ class NotifyWorker(Notify):
 
     @staticmethod
     async def update(notify_id: int, notify_data_to_update: dict, local_session: get_session):
-        query = update(Notify).where(Notify.notify_id == notify_id).values(notify_data_to_update)
+        query = update(Notify).where(Notify.notify_id == int(notify_id)).values(notify_data_to_update)
         await local_session.execute(query)
-        # notify_to_update = await local_session.query(NotifyWorker).filter(NotifyWorker.notify_id == notify_id).first()
-        # if notify_to_update:
-        #     notify_to_update.time = notify_data_to_update["time"]
-        #     notify_to_update.notify_header = notify_data_to_update["notify_header"]
-        #     notify_to_update.notify_data = notify_data_to_update["notify_data"]
-        #
-        # else:
-        #     info_logger.error(f'Notify {notify_id} does not exist!')
 
     @staticmethod
     async def delete(notify_id: int, local_session: get_session):
-        query = delete(Notify).where(Notify.notify_id == notify_id)
+        query = delete(Notify).where(Notify.notify_id == int(notify_id))
         await local_session.execute(query)
