@@ -8,9 +8,6 @@ from server import error_logger
 class HealthHandler:
     @staticmethod
     async def health_db():
-        settings = DefaultSettings()
-        db_uri = settings.database_uri
-
         success_resp = {"Result": "DB live"}
         no_success_resp = {"Result": "DB not connected"}
         try:

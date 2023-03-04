@@ -49,6 +49,8 @@ class NewsHandler:
         is_all = data.get('all', None)
 
         try:
+            if not news_id and not is_all:
+                is_all = True
             async with session() as local_session:
                 news = await NewsWorker.get(local_session, news_id=news_id, all_news=is_all)
                 await local_session.commit()

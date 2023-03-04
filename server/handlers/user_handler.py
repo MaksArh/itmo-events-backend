@@ -58,11 +58,15 @@ class UserHandler:
         :return: quart.Response({"user": dict(user)}), int(status_code)
         """
         session = await get_session()
+        user_isu_number = request.args.get('user_isu_number')
         try:
-            async with session() as local_session:
-                user = await UserWorker.get(int(request.args.get('user_isu_number')), local_session)
-                await local_session.commit()
-            return await quart.make_response({"user": user}), status.HTTP_200_OK
+            if user_isu_number:
+                async with session() as local_session:
+                    user = await UserWorker.get(int(user_isu_number), local_session)
+                    await local_session.commit()
+                return await quart.make_response({"user": user}), status.HTTP_200_OK
+            else:
+                return await quart.make_response({"user": {}, "error": "Not valid arguments"}), status.HTTP_400_BAD_REQUEST
         except Exception as E:
             error_logger.error(E)
             return await quart.make_response(

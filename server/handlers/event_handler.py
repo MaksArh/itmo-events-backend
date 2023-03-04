@@ -90,6 +90,8 @@ class EventHandler:
         is_all = data.get("all", None)
 
         try:
+            if not event_id and not is_all:
+                is_all = True
             async with session() as local_session:
                 events = await EventWorker.get(local_session=local_session, event_id=event_id, all_events=is_all)
 
