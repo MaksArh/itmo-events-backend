@@ -6,13 +6,6 @@ from data_base.models.tbl_sso_pub_key import SsoPubKey
 
 
 class SsoPubKeyWorker(SsoPubKey):
-    # def __init__(self, sso_pub_key_data: dict):
-    #     self.kid = sso_pub_key_data["kid"]
-    #     self.kty = sso_pub_key_data["kty"]
-    #     self.alg = sso_pub_key_data["alg"]
-    #     self.use = sso_pub_key_data["use"]
-    #     self.n = sso_pub_key_data["n"]
-    #     self.e = sso_pub_key_data["e"]
 
     @staticmethod
     def get_dict(sso_pub_key):

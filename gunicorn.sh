@@ -1,5 +1,5 @@
 #!/bin/sh
-gunicorn -b 0.0.0.0:8080 -k uvicorn.workers.UvicornWorker wsgi:app
+gunicorn -b 0.0.0.0:8080 -w 4 -k uvicorn.workers.UvicornWorker wsgi:app
 #gunicorn --bind 0.0.0.0:8080 wsgi:app -k Quart-UVLoop
 #--worker-class uvicorn.workers.UvicornWorker
 #gunicorn --bind 0.0.0.0:8080 wsgi:app -k gevent --workers=1 --worker-connections 1000
