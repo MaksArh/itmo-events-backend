@@ -4,7 +4,7 @@ WORKDIR /usr/src/app
 COPY poetry.lock poetry.lock
 COPY pyproject.toml pyproject.toml
 
-RUN pip3 install poetry
+RUN pip3 install poetry=="1.2.2"
 
 RUN poetry source add --default doubanio https://pypi.doubanio.com/simple
 
