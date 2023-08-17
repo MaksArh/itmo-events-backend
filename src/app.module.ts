@@ -32,7 +32,7 @@ import { JwtModule } from '@nestjs/jwt';
             port: Number(process.env.POSTGRESS_PORT) ?? 5432,
             username: process.env.POSTGRES_USER ?? 'admin',
             password: process.env.POSTGRES_PASSWORD ?? 'admin',
-            database: process.env.POSTGRES_DB ?? 'back-project',
+            database: process.env.POSTGRES_DB ?? 'backend',
             models: [User, Event, Reg, Form, News, Role, UserRoles],
             autoLoadModels: true,
             synchronize: true

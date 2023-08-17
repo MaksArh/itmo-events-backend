@@ -18,7 +18,7 @@ export class AuthController {
     }
 
     @Get('/callback')
-    async handleCallback (@Query() query, @Res() res: FastifyReply): Promise<void> {
+    async handleCallback (@Query() query: any, @Res() res: FastifyReply): Promise<void> {
         try {
             const code = query.code as string;
             const tokenData = await this.ssoService.exchangeCodeForAccessToken(code);
@@ -33,13 +33,11 @@ export class AuthController {
 
     @Get('/logout')
     logout (@Res() res: FastifyReply): void {
-        void this.ssoService.getLogoutLink().then(logoutLink => {
-            if (logoutLink != null) {
-                void res.redirect(301, logoutLink);
-            } else {
-                console.error('Ошибка при получении ссылки на выход из системы SSO');
-                void res.redirect(500, '/');
-            }
-        });
+        try {
+            const logoutUrl = this.ssoService.getLogoutUrl();
+            void res.redirect(301, logoutUrl);
+        } catch (e) {
+            console.log(`logout controller ERR: ${e.message as string}`);
+        }
     }
 }

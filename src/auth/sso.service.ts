@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { URLSearchParams } from 'url';
 import * as process from 'process';
+import * as cron from 'node-cron';
 
 @Injectable()
 export class SsoService {
@@ -15,10 +16,24 @@ export class SsoService {
     private readonly redirectUri = process.env.REDIRECT_URI ?? 'NULL_AUTH';
     private readonly logoutUri = process.env.LOGOUT_URI ?? 'NULL_AUTH';
 
+    private publicKeys: string[];
+
+    constructor () {
+        this.scheduleKeyUpdate();
+    }
+
+    // ---------- Работа с ссылками логина/выхода ----------
+
     getAuthorizationUrl (): string {
         const scope = 'openid profile edu work';
         return `${this.itmoIdAuthUrl}?client_id=${this.clientId}&response_type=code&redirect_uri=${this.redirectUri}&scope=${scope}`;
     }
+
+    getLogoutUrl (): string {
+        return `${this.itmoIdLogoutUrl}?client_id=${this.clientId}&post_logout_redirect_uri=${this.logoutUri}`;
+    }
+
+    // ---------- Работа с accessToken ----------
 
     async refreshAccess (refreshToken: string): Promise<any> {
         try {
@@ -54,16 +69,6 @@ export class SsoService {
         }
     }
 
-    async getPublicKeys (): Promise<any> {
-        try {
-            const keys = await axios.get(this.itmoIdPublicUrl);
-            return keys.data.keys;
-        } catch (e) {
-            console.log(`getPulicKeys service ERR: ${e.message as string}`);
-            return { null: 'null' };
-        }
-    }
-
     async getProfileFromToken (accessToken: string): Promise<Record<string, any>> {
         try {
             const user = await axios.get(this.itmoIdUserinfoUrl, { headers: { Authorization: `Bearer ${accessToken}` } });
@@ -74,12 +79,26 @@ export class SsoService {
         }
     }
 
-    async getLogoutLink (): Promise<string | null> {
+    // ---------- Работа с публичными ключами ----------
+
+    private scheduleKeyUpdate (): void {
+        // Запускаем задачу для обновления ключей каждый день в 00:00
+        cron.schedule('0 0 * * *', () => {
+            void this.updateKeys();
+        });
+    }
+
+    private async updateKeys (): Promise<void> {
         try {
-            return `${this.itmoIdLogoutUrl}?client_id=${this.clientId}&post_logout_redirect_uri=${this.logoutUri}`;
+            const keys = await axios.get(this.itmoIdPublicUrl);
+            this.publicKeys[0] = keys.data.keys[0];
+            this.publicKeys[1] = keys.data.keys[1];
         } catch (e) {
-            console.log(`logout service ERR: ${e.message as string}`);
-            return null;
+            console.log(`update public keys ERR: ${e.message as string}`);
         }
+    }
+
+    getPublicKey (key: number): string {
+        return this.publicKeys[key];
     }
 }

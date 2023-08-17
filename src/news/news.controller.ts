@@ -4,7 +4,7 @@ import { ApiTags } from '@nestjs/swagger';
 @ApiTags('Новости')
 @Controller('news')
 export class NewsController {
-    @Get('fetch')
+    @Get()
     fetchNews (): object[] {
         return [{ id: 123 }];
     }

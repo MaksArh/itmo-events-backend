@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import * as cookie from 'cookie';
 import * as jwt from 'jsonwebtoken';
 import { UsersService } from 'users/users.service';
 import { SsoService } from 'auth/sso.service';
@@ -9,7 +8,8 @@ import { type FastifyReply } from 'fastify';
 
 @Injectable()
 export class AuthService {
-    constructor (private readonly userRepository: UsersService, private readonly ssoService: SsoService) {
+    constructor (private readonly userRepository: UsersService,
+        private readonly ssoService: SsoService) {
     }
 
     async updateTokensFromRefresh (refreshToken: string): Promise<any> {
@@ -19,8 +19,7 @@ export class AuthService {
 
     async validateToken (token: string): Promise<boolean> {
         try {
-            const keys = await this.ssoService.getPublicKeys();
-            const publicKey = keys[0];
+            const publicKey = this.ssoService.getPublicKey(0);
             const publicKeyPem = jwkToPem(publicKey);
             jwt.verify(token, publicKeyPem, { algorithms: ['RS256'] });
             return true;

@@ -13,6 +13,7 @@ export class JwtAuthGuard implements CanActivate {
         try {
             const bearer = req.cookies.token_type;
             const accessToken = req.cookies.access_token;
+            console.log(bearer, accessToken);
             if (accessToken !== undefined && bearer === 'Bearer' &&
                 await this.authService.validateToken(accessToken)) {
                 console.log('    login::successful\n----------end guard----------');
