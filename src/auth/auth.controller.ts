@@ -2,7 +2,9 @@ import { Controller, Get, Query, Res } from '@nestjs/common';
 import { SsoService } from './sso.service';
 import { AuthService } from './auth.service';
 import { FastifyReply } from 'fastify';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Логин')
 @Controller('auth')
 export class AuthController {
     constructor (private readonly ssoService: SsoService, private readonly authService: AuthService) {}
@@ -13,7 +15,7 @@ export class AuthController {
             const authorizationUrl = this.ssoService.getAuthorizationUrl();
             void res.redirect(301, authorizationUrl);
         } catch (e) {
-            console.log(`login controller ERR: ${e.message as string}`);
+            console.log(`[ERR] auth controller login: ${e.message as string}`);
         }
     }
 
@@ -26,7 +28,7 @@ export class AuthController {
             this.authService.setCookies(res, tokenData);
             await res.redirect(301, 'http://localhost:8080/app/home');
         } catch (e) {
-            console.error('Ошибка при обмене кода авторизации на Access Token:', e.message);
+            console.error('[ERR] auth controller handleCallback:', e.message);
             void res.redirect(500, '/login');
         }
     }
@@ -37,7 +39,7 @@ export class AuthController {
             const logoutUrl = this.ssoService.getLogoutUrl();
             void res.redirect(301, logoutUrl);
         } catch (e) {
-            console.log(`logout controller ERR: ${e.message as string}`);
+            console.log(`[ERR] auth controller logout controller: ${e.message as string}`);
         }
     }
 }

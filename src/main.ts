@@ -45,7 +45,7 @@ const start = async (): Promise<any> => {
     app.setGlobalPrefix('back');
     SwaggerModule.setup('/back/api/docs', app, document);
     app.use(cookieParser());
-    await app.listen(PORT, '0.0.0.0', () => { console.log(`Si =${PORT}`); });
+    await app.listen(PORT, '0.0.0.0', () => { console.log(`ALIVE port=${PORT}`); });
     return 0;
 };
 

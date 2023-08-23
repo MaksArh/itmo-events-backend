@@ -1,5 +1,4 @@
 import { Controller, Get, Param, UseGuards } from '@nestjs/common';
-import { type CreateUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { User } from './user.model';
@@ -27,9 +26,8 @@ export class UsersController {
 
     @ApiOperation({ summary: 'Получение пользователя по isu' })
     @ApiResponse({ status: 200, type: [User] })
-    @UseGuards(JwtAuthGuard)
-    @Get('/:isuId')
-    async getUser (@Param('isu') isu: number): Promise<User | null> {
-        return await this.usersService.getUser(isu);
+    @Get('/:isu')
+    async getUser (@Param() params): Promise<User | null> {
+        return await this.usersService.getUser(params.isu);
     }
 }

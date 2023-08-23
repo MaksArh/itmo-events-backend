@@ -19,12 +19,12 @@ export class AuthService {
 
     async validateToken (token: string): Promise<boolean> {
         try {
-            const publicKey = this.ssoService.getPublicKey(0);
+            const publicKey = await this.ssoService.getKey() as string;
             const publicKeyPem = jwkToPem(publicKey);
             jwt.verify(token, publicKeyPem, { algorithms: ['RS256'] });
             return true;
         } catch (e) {
-            console.log(`validateToken service ERR: ${e.message as string}`);
+            console.log(`══[ERR] auth service validateToken: ${e as string}`);
             return false;
         }
     }
@@ -37,7 +37,7 @@ export class AuthService {
                 await this.userRepository.createUser(userDto);
             }
         } catch (e) {
-            console.log(`importUser service ERR: ${e.message as string}`);
+            console.log(`══[ERR] auth service importUser: ${e.message as string}`);
         }
     }
 

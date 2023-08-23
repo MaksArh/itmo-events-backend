@@ -11,4 +11,6 @@ import { Event } from './event.model';
         SequelizeModule.forFeature([Event])
     ]
 })
-export class EventsModule {}
+export class EventsModule {
+
+}

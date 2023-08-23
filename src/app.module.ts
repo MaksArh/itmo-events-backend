@@ -35,7 +35,8 @@ import { JwtModule } from '@nestjs/jwt';
             database: process.env.POSTGRES_DB ?? 'backend',
             models: [User, Event, Reg, Form, News, Role, UserRoles],
             autoLoadModels: true,
-            synchronize: true
+            synchronize: true,
+            logging: false
         }),
         UsersModule,
         NewsModule,

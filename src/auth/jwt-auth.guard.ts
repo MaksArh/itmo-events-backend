@@ -9,31 +9,30 @@ export class JwtAuthGuard implements CanActivate {
     async canActivate (context: ExecutionContext): Promise<boolean> {
         const req = context.switchToHttp().getRequest<FastifyRequest>();
         const res = context.switchToHttp().getResponse<FastifyReply>();
-        console.log('---------start guard---------');
+        console.log('╔═════════╡start guard╞════════╗');
         try {
             const bearer = req.cookies.token_type;
             const accessToken = req.cookies.access_token;
-            console.log(bearer, accessToken);
             if (accessToken !== undefined && bearer === 'Bearer' &&
                 await this.authService.validateToken(accessToken)) {
-                console.log('    login::successful\n----------end guard----------');
+                console.log('╠═login access:: successful    ║\n╚═════════╡ end guard ╞════════╝');
                 return true;
             } else {
                 if (req.cookies.refresh_token !== undefined) {
                     const newTokens = await this.authService.updateTokensFromRefresh(req.cookies.refresh_token);
                     this.authService.setCookies(res, newTokens);
-                    console.log('    login::successful\n----------end guard----------');
+                    console.log('╠═login refresh:: successful   ║\n╚═════════╡ end guard ╞════════╝');
                     void res.status(302).redirect(req.headers.referer as string);
                     return true;
                 }
-                console.log('       login::denied no access\n----------end guard----------');
-                void res.status(302).redirect('http://localhost:8080/back/auth/login');
+                console.log('╠═login:: denied no access     ║\n╚═════════╡ end guard ╞════════╝');
+                void res.status(302).redirect('/back/auth/login');
                 return false;
             }
         } catch (e) {
-            console.log(`JwtGuard ERR: ${e.message as string}`);
-            console.log('----------end guard----------');
-            void res.status(302).redirect('http://localhost:8080/back/auth/login');
+            console.log(`╠═[ERR] JwtGuard: ${e.message as string}`);
+            console.log('╚═════════╡ end guard ╞════════╝');
+            void res.status(302).redirect('/back/auth/login');
             return false;
         }
     }

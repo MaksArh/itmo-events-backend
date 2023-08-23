@@ -2,7 +2,9 @@ import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { URLSearchParams } from 'url';
 import * as process from 'process';
-import * as cron from 'node-cron';
+import { InjectModel } from '@nestjs/sequelize';
+import { Service } from 'auth/service.model';
+import { type CreateServiceDto } from 'auth/dto/create-service.dto';
 
 @Injectable()
 export class SsoService {
@@ -16,11 +18,7 @@ export class SsoService {
     private readonly redirectUri = process.env.REDIRECT_URI ?? 'NULL_AUTH';
     private readonly logoutUri = process.env.LOGOUT_URI ?? 'NULL_AUTH';
 
-    private publicKeys: string[];
-
-    constructor () {
-        this.scheduleKeyUpdate();
-    }
+    constructor (@InjectModel(Service) private readonly serviceRepository: typeof Service) {}
 
     // ---------- Работа с ссылками логина/выхода ----------
 
@@ -47,7 +45,7 @@ export class SsoService {
             });
             return response.data;
         } catch (e) {
-            console.log(`refreshAccess sso ERR: ${e.message as string}`);
+            console.log(`══[ERR] sso service refreshAccess: ${e.message as string}`);
         }
     }
 
@@ -64,7 +62,7 @@ export class SsoService {
             });
             return response.data;
         } catch (e) {
-            console.log(`exchangeCodeForAccessToken service ERR: ${e.message as string}`);
+            console.log(`══[ERR] sso service exchangeCodeForAccessToken: ${e.message as string}`);
             return { null: 'null' };
         }
     }
@@ -74,31 +72,29 @@ export class SsoService {
             const user = await axios.get(this.itmoIdUserinfoUrl, { headers: { Authorization: `Bearer ${accessToken}` } });
             return user.data;
         } catch (e) {
-            console.log(`getProfileFromToken service ERR: ${e.message as string}`);
+            console.log(`══[ERR] sso service getProfileFromToken: ${e.message as string}`);
             return { null: 'null' };
         }
     }
 
     // ---------- Работа с публичными ключами ----------
-
-    private scheduleKeyUpdate (): void {
-        // Запускаем задачу для обновления ключей каждый день в 00:00
-        cron.schedule('0 0 * * *', () => {
-            void this.updateKeys();
-        });
-    }
-
-    private async updateKeys (): Promise<void> {
+    async getKey (): Promise<string | null> {
         try {
-            const keys = await axios.get(this.itmoIdPublicUrl);
-            this.publicKeys[0] = keys.data.keys[0];
-            this.publicKeys[1] = keys.data.keys[1];
+            const name = 'keys';
+            const key = await this.serviceRepository.findOne({ where: { name } });
+            if (key != null) {
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-expect-error
+                return key.data.keys[0];
+            } else {
+                const data = await axios.get(this.itmoIdPublicUrl);
+                const dto = { name, data: data.data } satisfies CreateServiceDto;
+                await this.serviceRepository.create(dto);
+                return dto.data.keys[0];
+            }
         } catch (e) {
-            console.log(`update public keys ERR: ${e.message as string}`);
+            console.log(`══[ERR] sso service getKey ${e.message as string}`);
+            return null;
         }
-    }
-
-    getPublicKey (key: number): string {
-        return this.publicKeys[key];
     }
 }
