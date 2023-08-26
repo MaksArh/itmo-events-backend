@@ -1,0 +1,7 @@
+ITMOIDURL_AUTH=https://id.itmo.ru/auth/realms/itmo/protocol/openid-connect/auth
+ITMOIDURL_TOKEN=https://id.itmo.ru/auth/realms/itmo/protocol/openid-connect/token
+ITMOIDURL_USERINFO=https://id.itmo.ru/auth/realms/itmo/protocol/openid-connect/userinfo
+ITMOIDURL_LOGOUT=https://id.itmo.ru/auth/realms/itmo/protocol/openid-connect/logout
+ITMOIDURL_PUBLIC=https://id.itmo.ru/auth/realms/itmo/protocol/openid-connect/certs
+REDIRECT_URI=https://events.itmo.space/back/auth/callback
+LOGOUT_URI=https://isu.ifmo.ru

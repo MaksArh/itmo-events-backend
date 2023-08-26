@@ -1,11 +1,11 @@
-import {Body, Controller, Get, Param, Post, UseGuards} from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { FormsService } from 'forms/forms.service';
 import { Form } from 'forms/form.model';
 import { UsersService } from 'users/users.service';
 import { Cookies } from 'decorators/cookie.decorator';
 import { CreateFormDto } from 'forms/dto/create-form.dto';
-import {JwtAuthGuard} from "auth/jwt-auth.guard";
+import { JwtAuthGuard } from 'auth/jwt-auth.guard';
 
 @ApiTags('Формы')
 @Controller('forms')
