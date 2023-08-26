@@ -1,12 +1,13 @@
-FROM node:latest AS builder
+ARG NODE_VERSION=18.17
+
+FROM node:${NODE_VERSION} AS builder
 WORKDIR /app
-COPY ./package.json ./
+COPY ./package.json ./package-lock.json ./
 RUN npm install
 COPY . .
 RUN npm run build
 
-
-FROM node:18-alpine
+FROM node:${NODE_VERSION}-alpine
 WORKDIR /app
 COPY --from=builder /app ./
-CMD ["npm", "run", "start:prod"]
+CMD ["node", "dist/main"]
