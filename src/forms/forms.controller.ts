@@ -24,12 +24,13 @@ export class FormsController {
     @ApiOperation({ summary: 'Создание формы' })
     @ApiResponse({ status: 200, type: Form })
     @Post('create')
-    async createForm (@Body() form: Omit<CreateFormDto, 'userId'>, @Cookies('id_token') idToken: string):
+    async createForm (@Body() data: Omit<CreateFormDto, 'userId'>, @Cookies('id_token') idToken: string):
     Promise<CreateFormDto | any> {
         try {
             const isu = (this.userService.decodeUser(idToken)).isu;
-            const formDto = { ...form, userId: isu };
-            return await this.formService.createForm(formDto);
+            const formDto = { ...data, userId: isu };
+            const form = await this.formService.createForm(formDto as CreateFormDto);
+            return form?.id;
         } catch (e) {
             console.log(`[LOG] createForm: ${e.message as string}`);
             return { null: undefined };
