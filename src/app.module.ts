@@ -16,7 +16,7 @@ import { Role } from 'roles/role.model';
 import { UserRoles } from 'roles/user-roles.model';
 import { AuthModule } from 'auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
-import * as fs from 'fs';
+import { readFileSync } from 'fs';
 
 @Module({
     controllers: [],
@@ -31,10 +31,9 @@ import * as fs from 'fs';
             dialect: 'postgres',
             ssl: true,
             dialectOptions: {
-                rejectUnauthorized: true,
-                ca: fs
-                    .readFileSync('../root.crt')
-                    .toString()
+                ...(process.env.NODE_ENV === 'production' && {
+                    ca: readFileSync('/app/root.crt').toString()
+                })
             },
             host: process.env.POSTGRES_HOST ?? 'postgres',
             port: Number(process.env.POSTGRES_PORT) ?? 5432,
