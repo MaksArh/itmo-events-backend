@@ -1,4 +1,4 @@
-
+replicas: 1
 
 vault:
   enabled: true
@@ -22,12 +22,12 @@ configVariables:
   ITMOIDURL_PUBLIC: https://id.itmo.ru/auth/realms/itmo/protocol/openid-connect/certs
   REDIRECT_URI: https://events.itmo.space/back/auth/callback
   LOGOUT_URI: https://isu.ifmo.ru
-networkAccess:
-  external:
-    enabled: true
-    domain: events.itmo.space
-    pathPrefix: /back
-    ingressClassName: itmo-events
-  healthcheck:
-    enabled: false
-replicas: 1
+
+network:
+  enabled: true
+  domain: events.itmo.space
+  pathPrefix: /back
+  ingressClassName: itmo-events
+
+healthcheck:
+  enabled: false
