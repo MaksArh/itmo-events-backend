@@ -16,6 +16,7 @@ import { Role } from 'roles/role.model';
 import { UserRoles } from 'roles/user-roles.model';
 import { AuthModule } from 'auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
+import * as fs from 'fs';
 
 @Module({
     controllers: [],
@@ -30,10 +31,10 @@ import { JwtModule } from '@nestjs/jwt';
             dialect: 'postgres',
             ssl: true,
             dialectOptions: {
-                ssl: {
-                    require: true, // Установите true, если SSL обязателен
-                    rejectUnauthorized: false // Опция для отключения проверки сертификата, используйте её только на этапе разработки
-                }
+                rejectUnauthorized: true,
+                ca: fs
+                    .readFileSync('../root.crt')
+                    .toString()
             },
             host: process.env.POSTGRES_HOST ?? 'postgres',
             port: Number(process.env.POSTGRES_PORT) ?? 5432,
