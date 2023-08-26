@@ -1,7 +1,33 @@
-ITMOIDURL_AUTH=https://id.itmo.ru/auth/realms/itmo/protocol/openid-connect/auth
-ITMOIDURL_TOKEN=https://id.itmo.ru/auth/realms/itmo/protocol/openid-connect/token
-ITMOIDURL_USERINFO=https://id.itmo.ru/auth/realms/itmo/protocol/openid-connect/userinfo
-ITMOIDURL_LOGOUT=https://id.itmo.ru/auth/realms/itmo/protocol/openid-connect/logout
-ITMOIDURL_PUBLIC=https://id.itmo.ru/auth/realms/itmo/protocol/openid-connect/certs
-REDIRECT_URI=https://events.itmo.space/back/auth/callback
-LOGOUT_URI=https://isu.ifmo.ru
+
+
+vault:
+  enabled: true
+  vaultAddress: "https://vault.services.itmo.space"
+  roleName: "itmo-events"
+  mountPath: kubernetes
+  defaultPath: student-projects/data/itmo-events/backend
+  variables:
+    - name: POSTGRES_DB
+    - name: POSTGRES_USER
+    - name: POSTGRES_PASSWORD
+    - name: POSTGRES_HOST
+    - name: POSTGRES_PORT
+    - name: CLIENT_ID
+    - name: CLIENT_SECRET
+configVariables:
+  ITMOIDURL_AUTH: https://id.itmo.ru/auth/realms/itmo/protocol/openid-connect/auth
+  ITMOIDURL_TOKEN: https://id.itmo.ru/auth/realms/itmo/protocol/openid-connect/token
+  ITMOIDURL_USERINFO: https://id.itmo.ru/auth/realms/itmo/protocol/openid-connect/userinfo
+  ITMOIDURL_LOGOUT: https://id.itmo.ru/auth/realms/itmo/protocol/openid-connect/logout
+  ITMOIDURL_PUBLIC: https://id.itmo.ru/auth/realms/itmo/protocol/openid-connect/certs
+  REDIRECT_URI: https://events.itmo.space/back/auth/callback
+  LOGOUT_URI: https://isu.ifmo.ru
+networkAccess:
+  external:
+    enabled: true
+    domain: events.itmo.space
+    pathPrefix: /back
+    ingressClassName: itmo-events
+  healthcheck:
+    enabled: false
+replicas: 1
