@@ -1,13 +1,12 @@
-FROM node:latest AS production
-
-WORKDIR /usr/src/app
-
-COPY package*.json ./
-
-RUN npm install glob rimraf
-
-RUN npm install --only=production
-
+FROM node:latest AS builder
+WORKDIR /app
+COPY ./package.json ./
+RUN npm install
 COPY . .
-
 RUN npm run build
+
+
+FROM node:18-alpine
+WORKDIR /app
+COPY --from=builder /app ./
+CMD ["npm", "run", "start:prod"]
