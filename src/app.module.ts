@@ -29,7 +29,7 @@ import { JwtModule } from '@nestjs/jwt';
         SequelizeModule.forRoot({
             dialect: 'postgres',
             host: process.env.POSTGRES_HOST ?? 'postgres',
-            port: Number(process.env.POSTGRESS_PORT) ?? 5432,
+            port: Number(process.env.POSTGRES_PORT) ?? 5432,
             username: process.env.POSTGRES_USER ?? 'admin',
             password: process.env.POSTGRES_PASSWORD ?? 'admin',
             database: process.env.POSTGRES_DB ?? 'backend',
