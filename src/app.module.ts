@@ -31,9 +31,10 @@ import { readFileSync } from 'fs';
             dialect: 'postgres',
             ssl: true,
             dialectOptions: {
-                ...(process.env.NODE_ENV === 'production' && {
-                    ca: readFileSync('/app/root.crt').toString()
-                })
+                ssl: process.env.NODE_ENV === 'production' && {
+                    require: true,
+                    ca: readFileSync('root.crt').toString()
+                }
             },
             host: process.env.POSTGRES_HOST ?? 'postgres',
             port: Number(process.env.POSTGRES_PORT) ?? 5432,
