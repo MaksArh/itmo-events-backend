@@ -8,7 +8,7 @@ import fastifyHelmet from '@fastify/helmet';
 import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fastify';
 
 const CORS_OPTIONS = {
-    origin: ['http://localhost:8080'], // Обновленный origin
+    origin: ['http://localhost:8080', 'events.itmo.space'], // Обновленный origin
     allowedHeaders: [
         'Access-Control-Allow-Origin',
         'Origin',
