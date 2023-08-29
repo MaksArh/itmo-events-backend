@@ -13,7 +13,7 @@ export class UsersController {
 
     @ApiOperation({ summary: 'Получение пользователя' })
     @ApiResponse({ status: 200, type: User })
-    @Get(' me')
+    @Get('me')
     async getMe (@Cookies('id_token') idToken: string): Promise<User | null> {
         try {
             const isu = (this.usersService.decodeUser(idToken).isu);
