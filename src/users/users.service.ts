@@ -3,12 +3,11 @@ import { InjectModel } from '@nestjs/sequelize';
 import { User } from './user.model';
 import { type CreateUserDto } from './dto/create-user.dto';
 import { RolesService } from 'roles/roles.service';
-import { SsoService } from 'auth/sso.service';
 import * as jwt from 'jsonwebtoken';
 
 @Injectable()
 export class UsersService {
-    constructor (@InjectModel(User) private readonly userRepository: typeof User, private readonly roleService: RolesService, private readonly ssoService: SsoService) {
+    constructor (@InjectModel(User) private readonly userRepository: typeof User, private readonly roleService: RolesService) {
     }
 
     async createUser (dto: CreateUserDto): Promise<User | null> {
@@ -29,6 +28,23 @@ export class UsersService {
 
     decodeUser (idToken: string): CreateUserDto {
         return jwt.decode(idToken) as CreateUserDto;
+    }
+
+    async updateUser (isu: number, updates: object): Promise<void> {
+        try {
+            // Найдите пользователя, которого вы хотите обновить
+            const user = await this.userRepository.findOne({ where: { isu } });
+
+            if (user == null) {
+                throw new Error('User not found');
+            }
+
+            // Обновите данные пользователя
+            await user.update(updates);
+        } catch (e) {
+            console.log(`updateUser service ERR: ${e.message as string}`);
+            throw e; // Можете выбросить ошибку или обработать ее по вашему усмотрению
+        }
     }
 
     async getUser (isu: number): Promise<User | null> {

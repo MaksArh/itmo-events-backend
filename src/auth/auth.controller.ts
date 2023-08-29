@@ -26,6 +26,7 @@ export class AuthController {
             const tokenData = await this.ssoService.exchangeCodeForAccessToken(code);
             await this.authService.importUser(tokenData.id_token);
             this.authService.setCookies(res, tokenData);
+            console.log(query);
             await res.redirect(301, '/app/home');
         } catch (e) {
             console.error('[ERR] auth controller handleCallback:', e.message);
