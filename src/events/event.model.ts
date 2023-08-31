@@ -20,22 +20,22 @@ export class Event extends Model<Event, EventsCreationAttrs> {
         description: string;
 
     @Column({ type: DataType.STRING, allowNull: true })
-        imageURL: string;
+        imageUrl: string;
 
     @Column({ type: DataType.INTEGER, allowNull: false })
         authorId: number;
 
     @Column({ type: DataType.DATE, allowNull: false })
-        createDate: number;
+        EventStartDate: number;
 
     @Column({ type: DataType.DATE, allowNull: false })
-        expirationDate: number;
+        EventExpirationDate: number;
 
     @Column({ type: DataType.DATE, allowNull: false })
         regStartDate: number;
 
     @Column({ type: DataType.DATE, allowNull: false })
-        regExpiration: number;
+        regExpirationDate: number;
 
     @Column({ type: DataType.INTEGER, allowNull: false })
         duration: number;

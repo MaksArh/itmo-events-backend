@@ -28,8 +28,8 @@ export class FormsController {
     Promise<CreateFormDto | any> {
         try {
             const isu = (this.userService.decodeUser(idToken)).isu;
-            const formDto = { ...data, userId: isu };
-            const form = await this.formService.createForm(formDto as CreateFormDto);
+            const formDto: CreateFormDto = { ...data, userId: isu };
+            const form = await this.formService.createForm(formDto);
             return form?.id;
         } catch (e) {
             console.log(`[LOG] createForm: ${e.message as string}`);
