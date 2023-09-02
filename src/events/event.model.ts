@@ -26,10 +26,10 @@ export class Event extends Model<Event, EventsCreationAttrs> {
         authorId: number;
 
     @Column({ type: DataType.DATE, allowNull: false })
-        EventStartDate: number;
+        eventStartDate: number;
 
     @Column({ type: DataType.DATE, allowNull: false })
-        EventExpirationDate: number;
+        eventExpirationDate: number;
 
     @Column({ type: DataType.DATE, allowNull: false })
         regStartDate: number;
