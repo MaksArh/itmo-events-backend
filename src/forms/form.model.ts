@@ -1,5 +1,6 @@
-import { Column, DataType, Model, Table } from 'sequelize-typescript';
+import { Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
+import { Event } from 'events/event.model';
 
 export interface FormCreationAttrs {
     userId: number
@@ -29,4 +30,7 @@ export class Form extends Model<Form, FormCreationAttrs> {
     @ApiProperty({ example: '{...}', description: 'Наполнение формы полями' })
     @Column({ type: DataType.ARRAY(DataType.JSON), allowNull: false })
         fields: object[];
+
+    @HasMany(() => Event)
+        events: Event[];
 }

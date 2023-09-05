@@ -1,4 +1,6 @@
-import { Model, Column, DataType, Table } from 'sequelize-typescript';
+import { Model, Column, DataType, Table, HasOne, ForeignKey, BelongsTo } from 'sequelize-typescript';
+import { Form } from 'forms/form.model';
+import { Reg } from 'regs/reg.model';
 
 interface EventsCreationAttrs {
     title: string
@@ -46,12 +48,13 @@ export class Event extends Model<Event, EventsCreationAttrs> {
     @Column({ type: DataType.INTEGER, defaultValue: 0 })
         visitors: number;
 
-    // @Column({ type: DataType.STRING, allowNull: false })
-    //     category: number;
-    //
-    // @Column({ type: DataType.JSON, allowNull: true })
-    //     tags: string;
+    @HasOne(() => Reg)
+        reg: Reg;
 
+    @ForeignKey(() => Form)
     @Column({ type: DataType.INTEGER, allowNull: true })
         formId: number;
+
+    @BelongsTo(() => Form)
+        form: Form;
 }
