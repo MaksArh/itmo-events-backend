@@ -23,7 +23,7 @@ export class SsoService {
     // ---------- Работа с ссылками логина/выхода ----------
 
     getAuthorizationUrl (): string {
-        const scope = 'openid profile edu work';
+        const scope = 'openid%20profile%20edu%20work';
         return `${this.itmoIdAuthUrl}?client_id=${this.clientId}&response_type=code&redirect_uri=${this.redirectUri}&scope=${scope}`;
     }
 
