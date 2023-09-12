@@ -1,4 +1,4 @@
-import { Controller, Get, Query, Res } from '@nestjs/common';
+import { Controller, Get, Query, Redirect, Res } from '@nestjs/common';
 import { SsoService } from './sso.service';
 import { AuthService } from './auth.service';
 import { FastifyReply } from 'fastify';
@@ -10,16 +10,17 @@ export class AuthController {
     constructor (private readonly ssoService: SsoService, private readonly authService: AuthService) {}
 
     @Get('login')
-    redirectToAuthorization (@Res() res: FastifyReply): void {
+    async redirectToAuthorization (@Res() res: FastifyReply): Promise<any> {
         try {
             const authorizationUrl = this.ssoService.getAuthorizationUrl();
-            void res.redirect(301, authorizationUrl);
+            res.status(307).redirect(`/redirect?url=${authorizationUrl}`);
         } catch (e) {
             console.log(`[ERR] auth controller login: ${e.message as string}`);
         }
     }
 
     @Get('callback')
+    @Redirect()
     async handleCallback (@Query() query: any, @Res() res: FastifyReply): Promise<void> {
         try {
             const code = query.code as string;
