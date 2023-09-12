@@ -13,7 +13,7 @@ export class AuthController {
     async redirectToAuthorization (@Res() res: FastifyReply): Promise<any> {
         try {
             const authorizationUrl = this.ssoService.getAuthorizationUrl();
-            res.status(307).redirect(`/redirect?url=${authorizationUrl}`);
+            res.status(307).redirect(authorizationUrl);
         } catch (e) {
             console.log(`[ERR] auth controller login: ${e.message as string}`);
         }

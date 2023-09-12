@@ -26,13 +26,13 @@ export class JwtAuthGuard implements CanActivate {
                     return true;
                 }
                 console.log('╠═login:: denied no access     ║\n╚═════════╡ end guard ╞════════╝');
-                void res.status(307).redirect('/back/auth/login');
+                // void res.status(307).redirect('/back/auth/login');
                 return false;
             }
         } catch (e) {
             console.log(`╠═[ERR] JwtGuard: ${e.message as string}`);
             console.log('╚═════════╡ end guard ╞════════╝');
-            void res.status(307).redirect('/back/auth/login');
+            // void res.status(307).redirect('/back/auth/login');
             return false;
         }
     }
