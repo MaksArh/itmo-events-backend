@@ -13,7 +13,7 @@ export class AuthController {
     async redirectToAuthorization (@Res() res: FastifyReply): Promise<any> {
         try {
             const authorizationUrl = this.ssoService.getAuthorizationUrl();
-            await res.status(307).redirect(authorizationUrl);
+            await res.redirect(307, authorizationUrl);
         } catch (e) {
             console.log(`[ERR] auth controller login: ${e.message as string}`);
         }
@@ -29,7 +29,7 @@ export class AuthController {
             const tokenData = await this.ssoService.exchangeCodeForAccessToken(code);
             await this.authService.importUser(tokenData.id_token);
             this.authService.setCookies(res, tokenData);
-            await res.redirect(301, '/');
+            await res.redirect('/');
         } catch (e) {
             console.error('[ERR] auth controller handleCallback:', e.message);
             void res.redirect(500, '/');
