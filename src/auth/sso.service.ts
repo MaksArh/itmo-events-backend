@@ -56,7 +56,7 @@ export class SsoService {
             data.append('client_secret', this.clientSecret);
             data.append('grant_type', 'authorization_code');
             data.append('redirect_uri', this.redirectUri);
-            console.log(code);
+            console.log('[CODE]', code);
             data.append('code', code);
             const response = await axios.post(this.itmoIdTokenUrl, data, {
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' }

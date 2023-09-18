@@ -24,7 +24,7 @@ export class AuthController {
     async handleCallback (@Query() query: any, @Res() res: FastifyReply): Promise<void> {
         try {
             const code = query.code as string;
-            console.log(query);
+            console.log('[QUERY]:', query);
             console.log('-------------');
             const tokenData = await this.ssoService.exchangeCodeForAccessToken(code);
             await this.authService.importUser(tokenData.id_token);
