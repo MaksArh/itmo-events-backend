@@ -20,7 +20,7 @@ configVariables:
   ITMOIDURL_USERINFO: https://id.itmo.ru/auth/realms/itmo/protocol/openid-connect/userinfo
   ITMOIDURL_LOGOUT: https://id.itmo.ru/auth/realms/itmo/protocol/openid-connect/logout
   ITMOIDURL_PUBLIC: https://id.itmo.ru/auth/realms/itmo/protocol/openid-connect/certs
-  REDIRECT_URI: https://events.itmo.space/back/auth/callback
+  REDIRECT_URI: https://events.itmo.space
   LOGOUT_URI: https://isu.ifmo.ru
   PORT: 8080
 
