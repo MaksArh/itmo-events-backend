@@ -49,15 +49,22 @@ export class SsoService {
         }
     }
 
-    async exchangeCodeForAccessToken (code: string): Promise<Record<string, any>> {
+    async exchangeCodeForAccessToken (codeAuth: string): Promise<Record<string, any>> {
         try {
-            const data = new URLSearchParams();
-            data.append('client_id', this.clientId);
-            data.append('client_secret', this.clientSecret);
-            data.append('grant_type', 'authorization_code');
-            data.append('redirect_uri', this.redirectUri);
-            console.log('[CODE]', code);
-            data.append('code', code);
+            // const data = new URLSearchParams();
+            // data.append('client_id', this.clientId);
+            // data.append('client_secret', this.clientSecret);
+            // data.append('grant_type', 'authorization_code');
+            // data.append('redirect_uri', this.redirectUri);
+            // console.log('[CODE]', code);
+            // data.append('code', code);
+            const data = {
+                client_id: this.clientId,
+                client_secret: this.clientSecret,
+                grant_type: 'authorization_code',
+                redirect_uri: this.redirectUri,
+                code: codeAuth
+            };
             const response = await axios.post(this.itmoIdTokenUrl, data, {
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
             });
