@@ -43,8 +43,8 @@ const start = async (): Promise<any> => {
 
     const document = SwaggerModule.createDocument(app, config);
 
-    app.setGlobalPrefix('back');
-    SwaggerModule.setup('/back/api/docs', app, document);
+    app.setGlobalPrefix('api');
+    SwaggerModule.setup('/api/docs', app, document);
     app.use(cookieParser());
     await app.listen(PORT, '0.0.0.0', () => { console.log(`ALIVE port=${PORT}`); });
     return 0;
