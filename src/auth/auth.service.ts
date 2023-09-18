@@ -53,21 +53,12 @@ export class AuthService {
 
         cookies.forEach(cookieConfig => {
             const [name, value, maxAge] = cookieConfig;
-
-            if (maxAge !== undefined) {
-                void reply.setCookie(name, value.toString(), {
-                    httpOnly: true,
-                    maxAge,
-                    sameSite: 'strict',
-                    path: '/'
-                });
-            } else {
-                void reply.setCookie(name, value.toString(), {
-                    httpOnly: true,
-                    sameSite: 'strict',
-                    path: '/'
-                });
-            }
+            void reply.setCookie(name, value.toString(), {
+                httpOnly: true,
+                ...(maxAge !== undefined && { maxAge }),
+                sameSite: 'strict',
+                path: '/'
+            });
         });
     }
 }

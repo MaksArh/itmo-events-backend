@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import axios from 'axios';
+import axios, { type AxiosError } from 'axios';
 import { URLSearchParams } from 'url';
 import * as process from 'process';
 import { InjectModel } from '@nestjs/sequelize';
@@ -18,7 +18,7 @@ export class SsoService {
     private readonly redirectUri = process.env.REDIRECT_URI ?? 'NULL_AUTH';
     private readonly logoutUri = process.env.LOGOUT_URI ?? 'NULL_AUTH';
 
-    constructor (@InjectModel(Service) private readonly serviceRepository: typeof Service) {}
+    constructor (@InjectModel(Service) private readonly serviceRepository: typeof Service) { }
 
     // ---------- Работа с ссылками логина/выхода ----------
 
@@ -70,8 +70,10 @@ export class SsoService {
             });
             return response.data;
         } catch (e) {
-            console.log(`══[ERR] sso service exchangeCodeForAccessToken: ${e.message as string}`);
-            return { null: 'null' };
+            const error = e as AxiosError;
+            console.error(`══[ERR] sso service exchangeCodeForAccessToken: ${error.message}:`);
+            console.error(error?.response?.data);
+            return error?.response?.data as Record<string, any>;
         }
     }
 
