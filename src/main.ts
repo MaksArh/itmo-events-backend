@@ -9,7 +9,7 @@ import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fa
 
 
 const CORS_OPTIONS = {
-    origin: ['http://localhost:8080', 'https://events.itmo.space', 'https://id.itmo.ru'], // Обновленный origin
+    origin: ['https://events.itmo.space', 'https://id.itmo.ru'], // Обновленный origin
     allowedHeaders: [
         'Access-Control-Allow-Origin',
         'Origin',
