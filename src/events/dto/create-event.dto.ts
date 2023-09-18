@@ -7,7 +7,7 @@ export class CreateEventDto {
 
     readonly imageUrl: string;
 
-    readonly authorId: number;
+    readonly userId: number;
 
     readonly eventStartDate: number;
 

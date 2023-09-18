@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { FormsService } from 'forms/forms.service';
 import { Form } from 'forms/form.model';
@@ -9,7 +9,7 @@ import { JwtAuthGuard } from 'auth/jwt-auth.guard';
 
 @ApiTags('Формы')
 @Controller('forms')
-@UseGuards(JwtAuthGuard)
+// @UseGuards(JwtAuthGuard)
 export class FormsController {
     constructor (private readonly formService: FormsService, private readonly userService: UsersService) {}
 
@@ -33,7 +33,16 @@ export class FormsController {
             return form?.id;
         } catch (e) {
             console.log(`[LOG] createForm: ${e.message as string}`);
-            return { null: undefined };
+            return e.message as string;
+        }
+    }
+
+    @Delete('delete')
+    async deleteForm (@Cookies('id_token') idToken: string, @Body() id: number): Promise<void> {
+        const isu = (this.userService.decodeUser(idToken)).isu;
+        const form = await this.formService.getFormById(id);
+        if (form !== null && form?.userId === isu) {
+            await this.formService.deleteForm(id);
         }
     }
 }

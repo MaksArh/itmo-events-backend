@@ -3,9 +3,8 @@ import { Event } from 'events/event.model';
 
 interface RegCreationAttrs {
     eventId: number
-    regList: object[]
 }
-@Table({ tableName: 'regs' })
+@Table({ tableName: 'regs', createdAt: false, updatedAt: false })
 export class Reg extends Model<Reg, RegCreationAttrs> {
     @ForeignKey(() => Event)
     @Column({ type: DataType.INTEGER, unique: true, primaryKey: true, allowNull: false })

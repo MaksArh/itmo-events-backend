@@ -3,12 +3,16 @@ import { RegsService } from './regs.service';
 import { RegsController } from './regs.controller';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { Reg } from './reg.model';
+import { Event } from 'events/event.model';
 
 @Module({
     providers: [RegsService],
     controllers: [RegsController],
     imports: [
-        SequelizeModule.forFeature([Reg])
+        SequelizeModule.forFeature([Reg, Event])
+    ],
+    exports: [
+        RegsService
     ]
 })
 export class RegsModule {}

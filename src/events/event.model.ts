@@ -5,12 +5,12 @@ import { Reg } from 'regs/reg.model';
 interface EventsCreationAttrs {
     title: string
     description: string
-    authorId: number
+    userId: number
     imageUrl: string
     formId: number
 }
 
-@Table({ tableName: 'events' })
+@Table({ tableName: 'events', createdAt: false, updatedAt: false })
 export class Event extends Model<Event, EventsCreationAttrs> {
     @Column({ type: DataType.INTEGER, unique: true, primaryKey: true, autoIncrement: true, allowNull: false })
         id: number;
@@ -24,8 +24,11 @@ export class Event extends Model<Event, EventsCreationAttrs> {
     @Column({ type: DataType.STRING, allowNull: true })
         imageUrl: string;
 
+    @Column({ type: DataType.STRING, allowNull: true })
+        albumUrl: string;
+
     @Column({ type: DataType.INTEGER, allowNull: false })
-        authorId: number;
+        userId: number;
 
     @Column({ type: DataType.DATE, allowNull: false })
         eventStartDate: number;

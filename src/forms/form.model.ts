@@ -1,6 +1,7 @@
-import { Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
+import { Column, DataType, ForeignKey, HasMany, Model, Table } from 'sequelize-typescript';
 import { ApiProperty } from '@nestjs/swagger';
 import { Event } from 'events/event.model';
+import { User } from 'users/user.model';
 
 export interface FormCreationAttrs {
     userId: number
@@ -15,6 +16,7 @@ export class Form extends Model<Form, FormCreationAttrs> {
     @Column({ type: DataType.INTEGER, unique: true, primaryKey: true, allowNull: false, autoIncrement: true })
         id: number;
 
+    @ForeignKey(() => User)
     @ApiProperty({ example: '330330', description: 'isu id создателя формы' })
     @Column({ type: DataType.INTEGER, unique: true, allowNull: false })
         userId: number;

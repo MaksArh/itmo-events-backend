@@ -5,6 +5,7 @@ import { SequelizeModule } from '@nestjs/sequelize';
 import { Form } from './form.model';
 import { UsersModule } from 'users/users.module';
 import { AuthModule } from 'auth/auth.module';
+import { Event } from 'events/event.model';
 
 @Module({
     providers: [FormsService],
@@ -12,7 +13,10 @@ import { AuthModule } from 'auth/auth.module';
     imports: [
         forwardRef(() => UsersModule),
         forwardRef(() => AuthModule),
-        SequelizeModule.forFeature([Form])
+        SequelizeModule.forFeature([Form, Event])
+    ],
+    exports: [
+        FormsService
     ]
 })
 export class FormsModule {}
