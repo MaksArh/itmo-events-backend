@@ -14,7 +14,8 @@ export class AuthService {
 
     async updateTokensFromRefresh (refreshToken: string): Promise<any> {
         // new tokens getting from refresh (idToken accessToken refreshToken) with new expiration
-        return await this.ssoService.refreshAccess(refreshToken);
+        console.log(refreshToken)
+        // return await this.ssoService.refreshAccess(refreshToken);
     }
 
     async validateToken (token: string): Promise<boolean> {

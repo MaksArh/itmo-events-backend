@@ -71,7 +71,8 @@ export class SsoService {
             //     code: codeAuth
             // };
             const response = await axios.post(this.itmoIdTokenUrl, data.toString(), {
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded', "Access-Control-Allow-Origin": "*" },
+                withCredentials: true,
             });
             return response.data;
         } catch (e) {

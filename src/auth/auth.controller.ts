@@ -1,4 +1,4 @@
-import { Controller, Get, Query, Redirect, Res } from '@nestjs/common';
+import { Controller, Get, Query, Res } from '@nestjs/common';
 import { SsoService } from './sso.service';
 import { AuthService } from './auth.service';
 import { FastifyReply } from 'fastify';
@@ -24,18 +24,18 @@ export class AuthController {
         try {
             const code = query.code as string;
             if (code === undefined) {
-                console.log('YESS');
+                console.log('YESS', code, '!!!!!!!!!!!!!!!!!!!');
                 const authorizationUrl = this.ssoService.getAuthorizationUrl();
-                void await res.redirect(307, authorizationUrl);
-                return;
+                void await res.status(307).redirect(authorizationUrl);
+            } else {
+                console.log('CODED');
+                console.log('[QUERY]:', query.code);
+                const tokenData = await this.ssoService.exchangeCodeForAccessToken(code);
+                await this.authService.importUser(tokenData.id_token);
+                this.authService.setCookies(res, tokenData);
+                console.log('TOKENED');
+                void await res.redirect(307, '/');
             }
-            console.log('CODED');
-            console.log('[QUERY]:', query.code);
-            const tokenData = await this.ssoService.exchangeCodeForAccessToken(code);
-            await this.authService.importUser(tokenData.id_token);
-            this.authService.setCookies(res, tokenData);
-            console.log('TOKENED');
-            void await res.redirect(307, '/');
         } catch (e) {
             console.error('[ERR] auth controller handleCallback:', e.message);
             void res.redirect(307, '/');
