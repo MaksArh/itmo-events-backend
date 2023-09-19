@@ -22,17 +22,14 @@ export class JwtAuthGuard implements CanActivate {
                     const newTokens = await this.authService.updateTokensFromRefresh(req.cookies.refresh_token);
                     this.authService.setCookies(res, newTokens);
                     console.log('╠═login refresh:: successful   ║\n╚═════════╡ end guard ╞════════╝');
-                    // void res.status(307).redirect(req.headers.referer as string);
-                    return false;
+                    return true;
                 }
                 console.log('╠═login:: denied no access     ║\n╚═════════╡ end guard ╞════════╝');
-                // void res.status(307).redirect('/api/login');
                 return false;
             }
         } catch (e) {
             console.log(`╠═[ERR] JwtGuard: ${e.message as string}`);
             console.log('╚═════════╡ end guard ╞════════╝');
-            // void res.status(307).redirect('/api/login');
             return false;
         }
     }

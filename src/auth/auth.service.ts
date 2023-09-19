@@ -55,15 +55,19 @@ export class AuthService {
             ['scope', tokenData.scope]
         ];
         console.log('══[SET COOKIE]:', cookies);
-        cookies.forEach(cookieConfig => {
-            const [name, value, maxAge] = cookieConfig;
-            void reply.setCookie(name, value.toString(), {
-                httpOnly: true,
-                ...(maxAge !== undefined && { maxAge }),
-                sameSite: 'strict',
-                path: '/'
+        try {
+            cookies.forEach(cookieConfig => {
+                const [name, value, maxAge] = cookieConfig;
+                void reply.setCookie(name, value.toString(), {
+                    httpOnly: true,
+                    ...(maxAge !== undefined && { maxAge }),
+                    sameSite: 'strict',
+                    path: '/'
+                });
             });
-        });
-        console.log('══[COOKIE END]');
+            console.log('══[COOKIE END]');
+        } catch (e) {
+            console.error(`══[ERR] set cookie : ${e as string}:`);
+        }
     }
 }
