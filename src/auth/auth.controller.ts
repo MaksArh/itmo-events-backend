@@ -23,12 +23,12 @@ export class AuthController {
                 console.log('══[TOKEN_DATA]: ', tokenData);
                 await this.authService.importUser(tokenData.id_token);
                 this.authService.setCookies(res, tokenData);
-                void await res.status(307).redirect('/');
                 console.log('══[AFTER REDIRECT]');
+                return await res.status(307).redirect('/');
             }
         } catch (e) {
             console.error('══[ERR] auth controller handleCallback:', e.message);
-            void res.status(307).redirect('/');
+            return void await res.status(307).redirect('/');
         }
     }
 
