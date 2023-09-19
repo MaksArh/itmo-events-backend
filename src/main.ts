@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from 'app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import * as cookieParser from 'cookie-parser';
+// import * as cookieParser from 'cookie-parser';
 import fastifyCookie from '@fastify/cookie';
 import fastifyCors from '@fastify/cors';
 import fastifyHelmet from '@fastify/helmet';
@@ -45,7 +45,7 @@ const start = async (): Promise<any> => {
 
     app.setGlobalPrefix('api');
     SwaggerModule.setup('/api/docs', app, document);
-    app.use(cookieParser());
+    // app.use(cookieParser());
     await app.listen(PORT, '0.0.0.0', () => { console.log(`ALIVE port=${PORT}`); });
     return 0;
 };
