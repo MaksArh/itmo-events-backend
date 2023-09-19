@@ -58,7 +58,7 @@ export class AuthService {
         try {
             cookies.forEach(cookieConfig => {
                 const [name, value, maxAge] = cookieConfig;
-                void reply.setCookie(name, value.toString(), {
+                void reply.setCookie(name, `${value}`, {
                     httpOnly: true,
                     ...(maxAge !== undefined && { maxAge }),
                     sameSite: 'strict',
