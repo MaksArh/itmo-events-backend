@@ -63,7 +63,6 @@ export class AuthService {
                     ...(maxAge !== undefined && { maxAge }),
                     sameSite: 'strict',
                     path: '/',
-                    domain: 'events.itmo.space'
                 });
             });
             console.log('══[COOKIE END]');
