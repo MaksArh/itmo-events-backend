@@ -14,8 +14,8 @@ export class AuthService {
 
     async updateTokensFromRefresh (refreshToken: string): Promise<any> {
         // new tokens getting from refresh (idToken accessToken refreshToken) with new expiration
-        console.log(refreshToken)
-        // return await this.ssoService.refreshAccess(refreshToken);
+        console.log(refreshToken);
+        return await this.ssoService.refreshAccess(refreshToken);
     }
 
     async validateToken (token: string): Promise<boolean> {
@@ -32,9 +32,12 @@ export class AuthService {
 
     async importUser (idToken: string): Promise<void> {
         try {
+            console.log('══[IMPORT USER START]:', idToken);
             const userDto = jwt.decode(idToken) as CreateUserDto;
             const candidate = await this.userRepository.getUser(userDto.isu);
+            console.log('══[CANDIDATE]:', candidate);
             if (candidate === null) {
+                console.log('══[CREATING USER]');
                 await this.userRepository.createUser(userDto);
             }
         } catch (e) {
@@ -51,7 +54,7 @@ export class AuthService {
             ['session_state', tokenData.session_state],
             ['scope', tokenData.scope]
         ];
-
+        console.log('══[SET COOKIE]:', cookies);
         cookies.forEach(cookieConfig => {
             const [name, value, maxAge] = cookieConfig;
             void reply.setCookie(name, value.toString(), {
@@ -61,5 +64,6 @@ export class AuthService {
                 path: '/'
             });
         });
+        console.log('══[COOKIE END]');
     }
 }

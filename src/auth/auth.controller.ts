@@ -9,36 +9,26 @@ import { ApiTags } from '@nestjs/swagger';
 export class AuthController {
     constructor (private readonly ssoService: SsoService, private readonly authService: AuthService) {}
 
-    // @Get('login')
-    // async redirectToAuthorization (@Res() res: FastifyReply): Promise<any> {
-    //     try {
-    //         const authorizationUrl = this.ssoService.getAuthorizationUrl();
-    //         await res.redirect(307, authorizationUrl);
-    //     } catch (e) {
-    //         console.log(`[ERR] auth controller login: ${e.message as string}`);
-    //     }
-    // }
-
     @Get()
     async login (@Query() query: any, @Res() res: FastifyReply): Promise<void> {
         try {
             const code = query.code as string;
             if (code === undefined) {
-                console.log('YESS', code, '!!!!!!!!!!!!!!!!!!!');
+                console.log('══[NO CODE]: ', code);
                 const authorizationUrl = this.ssoService.getAuthorizationUrl();
                 void await res.status(307).redirect(authorizationUrl);
             } else {
-                console.log('CODED');
-                console.log('[QUERY]:', query.code);
+                console.log('══[CODE SUCCESS]: ', code);
                 const tokenData = await this.ssoService.exchangeCodeForAccessToken(code);
+                console.log('══[TOKEN_DATA]: ', tokenData);
                 await this.authService.importUser(tokenData.id_token);
                 this.authService.setCookies(res, tokenData);
-                console.log('TOKENED');
-                void await res.redirect(307, '/');
+                void await res.status(307).redirect('/');
+                console.log('══[AFTER REDIRECT]');
             }
         } catch (e) {
-            console.error('[ERR] auth controller handleCallback:', e.message);
-            void res.redirect(307, '/');
+            console.error('══[ERR] auth controller handleCallback:', e.message);
+            void res.status(307).redirect('/');
         }
     }
 
@@ -48,7 +38,7 @@ export class AuthController {
             const logoutUrl = this.ssoService.getLogoutUrl();
             void res.redirect(301, logoutUrl);
         } catch (e) {
-            console.log(`[ERR] auth controller logout controller: ${e.message as string}`);
+            console.log(`══[ERR] auth controller logout controller: ${e.message as string}`);
         }
     }
 }

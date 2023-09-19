@@ -45,35 +45,27 @@ export class SsoService {
             });
             return response.data;
         } catch (e) {
+            const error = e as AxiosError;
             console.log(`══[ERR] sso service refreshAccess: ${e.message as string}`);
+            console.error(error?.response?.data);
+            return error?.response?.data as Record<string, any>;
         }
     }
 
     async exchangeCodeForAccessToken (codeAuth: string): Promise<Record<string, any>> {
         try {
+            console.log('══[ACCESS START]: ', codeAuth);
             const data = new URLSearchParams({
                 client_id: this.clientId,
                 client_secret: this.clientSecret,
                 grant_type: 'authorization_code',
                 redirect_uri: this.redirectUri,
-                code: codeAuth,
+                code: codeAuth
             });
-            // data.append('client_id', this.clientId);
-            // data.append('client_secret', this.clientSecret);
-            // data.append('grant_type', 'authorization_code');
-            // data.append('redirect_uri', this.redirectUri);
-            // data.append('code', codeAuth);
-            // const data = {
-            //     client_id: this.clientId,
-            //     client_secret: this.clientSecret,
-            //     grant_type: 'authorization_code',
-            //     redirect_uri: this.redirectUri,
-            //     code: codeAuth
-            // };
             const response = await axios.post(this.itmoIdTokenUrl, data.toString(), {
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded', "Access-Control-Allow-Origin": "*" },
-                withCredentials: true,
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
             });
+            console.log('══[RESPONSE ACCESS]: ', response.data);
             return response.data;
         } catch (e) {
             const error = e as AxiosError;

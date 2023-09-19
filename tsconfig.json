@@ -20,7 +20,7 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
-//    "strict": true,
+    "strict": false,
 //    "types": [ "node" ],
 //    "typeRoots": [ "../node_modules/@types" ]
 //    "target": "ES5",
