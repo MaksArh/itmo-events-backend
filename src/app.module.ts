@@ -17,6 +17,7 @@ import { UserRoles } from 'roles/user-roles.model';
 import { AuthModule } from 'auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { readFileSync } from 'fs';
+import { LoggerModule } from './logger/logger.module';
 
 @Module({
     controllers: [],
@@ -53,7 +54,8 @@ import { readFileSync } from 'fs';
         RegsModule,
         RolesModule,
         AuthModule,
-        JwtModule
+        JwtModule,
+        LoggerModule
     ]
 
 })

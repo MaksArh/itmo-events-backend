@@ -5,11 +5,13 @@ import { SsoService } from 'auth/sso.service';
 import * as jwkToPem from 'jwk-to-pem';
 import { type CreateUserDto } from 'users/dto/create-user.dto';
 import { type FastifyReply } from 'fastify';
+import { LoggerService } from 'logger/logger.service';
 
 @Injectable()
 export class AuthService {
     constructor (private readonly userRepository: UsersService,
-        private readonly ssoService: SsoService) {
+        private readonly ssoService: SsoService,
+        private readonly logger: LoggerService) {
     }
 
     async updateTokensFromRefresh (refreshToken: string): Promise<any> {
@@ -45,7 +47,7 @@ export class AuthService {
         }
     }
 
-    setCookies (reply: FastifyReply, tokenData: Record<string, any>): void {
+    async setCookies (reply: FastifyReply, tokenData: Record<string, any>): Promise<void> {
         const cookies = [
             ['access_token', tokenData.access_token, tokenData.expires_in],
             ['id_token', tokenData.id_token],
@@ -54,6 +56,7 @@ export class AuthService {
             ['session_state', tokenData.session_state],
             ['scope', tokenData.scope]
         ];
+        await this.logger.log({ log: ['══[SET COOKIE]:', cookies] });//
         console.log('══[SET COOKIE]:', cookies);
         try {
             cookies.forEach(cookieConfig => {
@@ -62,11 +65,13 @@ export class AuthService {
                     httpOnly: true,
                     ...(maxAge !== undefined && { maxAge }),
                     sameSite: 'strict',
-                    path: '/',
+                    path: '/'
                 });
             });
+            await this.logger.log({ log: ['══[COOKIE END]'] });//
             console.log('══[COOKIE END]');
         } catch (e) {
+            await this.logger.log({ log: ['══[ERR] set cookie :', e as string] });//
             console.error(`══[ERR] set cookie : ${e as string}:`);
         }
     }
