@@ -45,7 +45,7 @@ export class AuthService {
         }
     }
 
-    setCookies (reply: FastifyReply, tokenData: Record<string, any>): void {
+    async setCookies (reply: FastifyReply, tokenData: Record<string, any>): Promise<void> {
         const cookies = [
             ['access_token', tokenData.access_token, tokenData.expires_in],
             ['id_token', tokenData.id_token],
@@ -58,7 +58,7 @@ export class AuthService {
         try {
             cookies.forEach(cookieConfig => {
                 const [name, value, maxAge] = cookieConfig;
-                void reply.setCookie(name, `${value}`, {
+                reply.setCookie(name, `${value}`, {
                     httpOnly: true,
                     ...(maxAge !== undefined && { maxAge }),
                     sameSite: 'strict',
