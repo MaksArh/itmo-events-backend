@@ -23,9 +23,12 @@ export class AuthController {
                 if (isString(tokenData.error)) {
                    return await res.status(301).redirect('/error');
                 }
-                await this.authService.importUser(tokenData.id_token);
-	            await this.authService.setCookies(res, tokenData);
-	            console.log('══[AFTER REDIRECT]');
+                if (tokenData?.id_token) {
+                    await this.authService.importUser(tokenData?.id_token);
+                    this.authService.setCookies(res, tokenData);
+                } else {
+                    return await res.status(301).redirect('/error');
+                }
 	            return await res.status(301).redirect('/');
             }
         } catch (e) {
