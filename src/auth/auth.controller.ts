@@ -35,10 +35,13 @@ export class AuthController {
                 } else {
                     return await res.status(301).redirect('/error');
                 }
-                return await res.status(301).redirect('/');
+                await this.console.log(['[BEFORE REDIRECT]:']);
+                void await res.status(301).redirect('/');
+                await this.console.log(['[AFTER REDIRECT]:']);
             }
         } catch (e) {
             console.error('══[ERR] auth controller handleCallback:', e.message);
+            await this.console.log(['══[ERR] auth controller handleCallback:', e as string]);
             await res.status(307).redirect('/');
         }
     }
