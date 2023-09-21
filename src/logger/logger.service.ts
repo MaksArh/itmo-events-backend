@@ -8,8 +8,10 @@ export class LoggerService {
     constructor (@InjectModel(Logger) private readonly loggerRepository: typeof Logger) {
     }
 
-    async log (dto: CreateLogDto): Promise<void> {
+    async log (m: any[]): Promise<void> {
         try {
+            const dto: CreateLogDto = { log: m };
+            console.log(dto.log);
             await this.loggerRepository.create(dto);
         } catch (e) {
             console.log(e.message);

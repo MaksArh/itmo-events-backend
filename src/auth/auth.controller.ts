@@ -3,25 +3,28 @@ import { SsoService } from './sso.service';
 import { AuthService } from './auth.service';
 import { FastifyReply } from 'fastify';
 import { ApiTags } from '@nestjs/swagger';
-import { isString } from "@nestjs/common/utils/shared.utils";
+import { isString } from '@nestjs/common/utils/shared.utils';
+import { LoggerService } from 'logger/logger.service';
 
 @ApiTags('Логин')
 @Controller('login')
 export class AuthController {
     constructor (private readonly ssoService: SsoService,
-        private readonly authService: AuthService) {}
+        private readonly authService: AuthService,
+        private readonly console: LoggerService) {}
 
     @Get()
     async login (@Query() query: any, @Res() res: FastifyReply): Promise<any> {
         try {
             const code = query.code as string;
+            await this.console.log(['[LOG]:', code]);
             if (code === undefined) {
                 const authorizationUrl = this.ssoService.getAuthorizationUrl();
                 void await res.status(307).redirect(authorizationUrl);
             } else {
                 const tokenData = await this.ssoService.exchangeCodeForAccessToken(code);
                 if (isString(tokenData.error)) {
-                   return await res.status(301).redirect('/error');
+                    return await res.status(301).redirect('/error');
                 }
                 if (tokenData?.id_token) {
                     await this.authService.importUser(tokenData?.id_token);
@@ -29,11 +32,11 @@ export class AuthController {
                 } else {
                     return await res.status(301).redirect('/error');
                 }
-	            return await res.status(301).redirect('/');
+                return await res.status(301).redirect('/');
             }
         } catch (e) {
             console.error('══[ERR] auth controller handleCallback:', e.message);
-            return res.status(307).redirect('/');
+            await res.status(307).redirect('/');
         }
     }
 
