@@ -3,6 +3,7 @@ import { SsoService } from './sso.service';
 import { AuthService } from './auth.service';
 import { FastifyReply } from 'fastify';
 import { ApiTags } from '@nestjs/swagger';
+import { isString } from "@nestjs/common/utils/shared.utils";
 
 @ApiTags('Логин')
 @Controller('login')
@@ -19,14 +20,17 @@ export class AuthController {
                 void await res.status(307).redirect(authorizationUrl);
             } else {
                 const tokenData = await this.ssoService.exchangeCodeForAccessToken(code);
+                if (isString(tokenData.error)) {
+                   return await res.status(301).redirect('/error');
+                }
                 await this.authService.importUser(tokenData.id_token);
-                return { id: 123 };
-                // this.authService.setCookies(res, tokenData);
-                // return await res.status(307).redirect('/');
+	            await this.authService.setCookies(res, tokenData);
+	            console.log('══[AFTER REDIRECT]');
+	            return await res.status(301).redirect('/');
             }
         } catch (e) {
             console.error('══[ERR] auth controller handleCallback:', e.message);
-            void res.status(307).redirect('/');
+            return res.status(307).redirect('/');
         }
     }
 
