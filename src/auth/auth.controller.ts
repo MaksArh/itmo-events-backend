@@ -18,6 +18,7 @@ export class AuthController {
         try {
             const code = query.code as string;
             await this.console.log(['[CODE]:', code]);
+            await this.console.log(['[RESPONSE]:', res]);
             if (code === undefined) {
                 await this.console.log(['[RED-AUTH]:']);
                 const authorizationUrl = this.ssoService.getAuthorizationUrl();
@@ -31,7 +32,24 @@ export class AuthController {
                 if (tokenData?.id_token) {
                     await this.console.log(['[IMPORTING+COOKIE]:']);
                     await this.authService.importUser(tokenData?.id_token);
-                    await this.authService.setCookies(res, tokenData);
+                    const cookies = [
+                        ['access_token', tokenData.access_token, tokenData.expires_in],
+                        ['id_token', tokenData.id_token],
+                        ['refresh_token', tokenData.refresh_token, tokenData.refresh_expires_in],
+                        ['token_type', tokenData.token_type],
+                        ['session_state', tokenData.session_state],
+                        ['scope', tokenData.scope]
+                    ];
+                    cookies.forEach(cookieConfig => {
+                        const [name, value, maxAge] = cookieConfig;
+                        await res.setCookie(name, `${value}`, {
+                            httpOnly: true,
+                            ...(maxAge !== undefined && { maxAge }),
+                            sameSite: 'strict',
+                            path: '/'
+                        });
+                    });
+                    // await this.authService.setCookies(res, tokenData);
                 } else {
                     return await res.status(301).redirect('/error');
                 }
