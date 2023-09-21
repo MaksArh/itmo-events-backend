@@ -42,7 +42,7 @@ export class AuthController {
                     ];
                     cookies.forEach(cookieConfig => {
                         const [name, value, maxAge] = cookieConfig;
-                        await res.setCookie(name, `${value}`, {
+                        res.setCookie(name, `${value}`, {
                             httpOnly: true,
                             ...(maxAge !== undefined && { maxAge }),
                             sameSite: 'strict',
