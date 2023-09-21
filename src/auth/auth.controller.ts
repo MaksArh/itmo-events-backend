@@ -20,8 +20,9 @@ export class AuthController {
             } else {
                 const tokenData = await this.ssoService.exchangeCodeForAccessToken(code);
                 await this.authService.importUser(tokenData.id_token);
-                this.authService.setCookies(res, tokenData);
-                return await res.status(307).redirect('/');
+                return { id: 123 };
+                // this.authService.setCookies(res, tokenData);
+                // return await res.status(307).redirect('/');
             }
         } catch (e) {
             console.error('══[ERR] auth controller handleCallback:', e.message);
