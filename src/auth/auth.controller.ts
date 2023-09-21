@@ -17,18 +17,21 @@ export class AuthController {
     async login (@Query() query: any, @Res() res: FastifyReply): Promise<any> {
         try {
             const code = query.code as string;
-            await this.console.log(['[LOG]:', code]);
+            await this.console.log(['[CODE]:', code]);
             if (code === undefined) {
+                await this.console.log(['[RED-AUTH]:']);
                 const authorizationUrl = this.ssoService.getAuthorizationUrl();
                 void await res.status(307).redirect(authorizationUrl);
             } else {
                 const tokenData = await this.ssoService.exchangeCodeForAccessToken(code);
+                await this.console.log(['[TOKENDATA]:', tokenData]);
                 if (isString(tokenData.error)) {
                     return await res.status(301).redirect('/error');
                 }
                 if (tokenData?.id_token) {
+                    await this.console.log(['[IMPORTING+COOKIE]:']);
                     await this.authService.importUser(tokenData?.id_token);
-                    this.authService.setCookies(res, tokenData);
+                    await this.authService.setCookies(res, tokenData);
                 } else {
                     return await res.status(301).redirect('/error');
                 }
