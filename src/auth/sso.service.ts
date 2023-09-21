@@ -5,7 +5,6 @@ import * as process from 'process';
 import { InjectModel } from '@nestjs/sequelize';
 import { Service } from 'auth/service.model';
 import { type CreateServiceDto } from 'auth/dto/create-service.dto';
-import {LoggerService} from "logger/logger.service";
 
 @Injectable()
 export class SsoService {
@@ -19,7 +18,7 @@ export class SsoService {
     private readonly redirectUri = process.env.REDIRECT_URI ?? 'NULL_AUTH';
     private readonly logoutUri = process.env.LOGOUT_URI ?? 'NULL_AUTH';
 
-    constructor (@InjectModel(Service) private readonly serviceRepository: typeof Service, private readonly logger: LoggerService) { }
+    constructor (@InjectModel(Service) private readonly serviceRepository: typeof Service) { }
 
     // ---------- Работа с ссылками логина/выхода ----------
 
@@ -55,8 +54,6 @@ export class SsoService {
 
     async exchangeCodeForAccessToken (codeAuth: string): Promise<Record<string, any>> {
         try {
-            await this.logger.log({ log: ['══[ACCESS START]: ', codeAuth] });//
-            console.log('══[ACCESS START]: ', codeAuth);
             const data = new URLSearchParams({
                 client_id: this.clientId,
                 client_secret: this.clientSecret,
@@ -67,14 +64,10 @@ export class SsoService {
             const response = await axios.post(this.itmoIdTokenUrl, data.toString(), {
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
             });
-            await this.logger.log({ log: ['══[RESPONSE ACCESS]: ', response.data] });//
-            console.log('══[RESPONSE ACCESS]: ', response.data);
             return response.data;
         } catch (e) {
             const error = e as AxiosError;
-            await this.logger.log({ log: ['══[ERR] sso service exchangeCodeForAccessToken: ', error.message] });//
             console.error(`══[ERR] sso service exchangeCodeForAccessToken: ${error.message}:`);
-            await this.logger.log({ log: ['e: ', error?.response?.data] });//
             console.error(error?.response?.data);
             return error?.response?.data as Record<string, any>;
         }
