@@ -29,6 +29,8 @@ network:
   domain: events.itmo.space
   pathPrefix: /api
   ingressClassName: itmo-events
+  ingressAnnotations:
+    nginx.ingress.kubernetes.io/proxy-buffer-size: "8k"
 
 healthcheck:
   enabled: false
