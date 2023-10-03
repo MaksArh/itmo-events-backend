@@ -42,19 +42,13 @@ export class EventsController {
     @ApiOperation({ summary: 'Получение мероприятия по id' })
     @ApiResponse({ status: 200, type: Event })
     @Get(':id')
-    async getEvent (@Param() params, @Cookies('id_token') idToken: string): Promise<Event | null> {
+    async getEvent (@Param() params): Promise<Event | null> {
         try {
-            const isu = (this.userService.decodeUser(idToken)).isu;
-            const event = await this.eventsService.getEvent(params.id);
-            if (event?.userId === isu) {
-                return event
-            }
-            return null;
+            return await this.eventsService.getEvent(params.id);
         } catch (e) {
             console.log(`[LOG] getEvent: ${e.message as string}`);
             return null;
         }
-
     }
 
     @Delete('delete')
