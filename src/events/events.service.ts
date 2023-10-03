@@ -22,10 +22,14 @@ export class EventsService {
 
     async createEvent (dto: CreateEventDto): Promise<Event> {
         const event = await this.eventRepository.create(dto);
-        const form = await this.formService.getFormById(dto.formId);
-        if ((event != null) && (form != null)) {
-            await event.$set('form', [form.id]);
-            event.form = form;
+        if (dto.formId) {
+            const form = await this.formService.getFormById(dto.formId);
+            if ((form != null)) {
+                await event.$set('form', [form.id]);
+                event.form = form;
+            }
+        }
+        if ((event != null)) {
             await this.regRepository.createReg({ eventId: event?.id });
             return event;
         }
