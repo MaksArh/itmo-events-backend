@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateEventDto } from 'events/dto/create-event.dto';
 import { EventsService } from 'events/events.service';
@@ -48,6 +48,19 @@ export class EventsController {
         } catch (e) {
             console.log(`[LOG] getEvent: ${e.message as string}`);
             return null;
+        }
+    }
+
+    // @ApiOperation({ summary: 'Получение мероприятия по id' })
+    // @ApiResponse({ status: 200, type: Event })
+    @Patch(':id')
+    async editEvent (@Body() data: CreateEventDto): Promise<boolean> {
+        try {
+            await this.eventsService.editEvent(data);
+            return true
+        } catch (e) {
+            console.log(`[LOG] getEvent: ${e.message as string}`);
+            return false;
         }
     }
 

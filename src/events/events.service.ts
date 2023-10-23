@@ -36,6 +36,20 @@ export class EventsService {
         return event;
     }
 
+    async editEvent (data: { id: number }): Promise<void> {
+        try {
+            const event = await this.eventRepository.findOne({where: {id: data.id}});
+            if (event == null) {
+                throw new Error('Event not found');
+            }
+
+            await event.update(data);
+        } catch (e) {
+            console.log(`updateEvent service ERR: ${e.message as string}`);
+            throw e;
+        }
+    }
+
     async deleteEvent (id: number): Promise<void> {
         await this.eventRepository.destroy({ where: { id } });
     }
