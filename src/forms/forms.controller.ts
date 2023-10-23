@@ -1,17 +1,23 @@
-import { Body, Controller, Delete, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { FormsService } from 'forms/forms.service';
 import { Form } from 'forms/form.model';
 import { UsersService } from 'users/users.service';
 import { Cookies } from 'decorators/cookie.decorator';
 import { CreateFormDto } from 'forms/dto/create-form.dto';
-import { JwtAuthGuard } from 'auth/jwt-auth.guard';
 
 @ApiTags('Формы')
 @Controller('forms')
 // @UseGuards(JwtAuthGuard)
 export class FormsController {
     constructor (private readonly formService: FormsService, private readonly userService: UsersService) {}
+
+    @ApiOperation({ summary: 'Получение форм' })
+    @ApiResponse({ status: 200, type: Form })
+    @Get()
+    async fetchForms (@Param() params): Promise<Form[]> {
+        return await this.formService.fetchForms();
+    }
 
     @ApiOperation({ summary: 'Получение форы по id' })
     @ApiResponse({ status: 200, type: Form })

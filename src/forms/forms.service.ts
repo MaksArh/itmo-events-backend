@@ -16,6 +16,10 @@ export class FormsService {
         return await this.formRepository.findOne({ where: { id } });
     }
 
+    async fetchForms (): Promise<Form[]> {
+        return await this.formRepository.findAll();
+    }
+
     async deleteForm (id: number): Promise<void> {
         await this.formRepository.destroy({ where: { id } });
     }
