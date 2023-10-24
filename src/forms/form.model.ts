@@ -18,7 +18,7 @@ export class Form extends Model<Form, FormCreationAttrs> {
 
     @ForeignKey(() => User)
     @ApiProperty({ example: '330330', description: 'isu id создателя формы' })
-    @Column({ type: DataType.INTEGER, unique: true, allowNull: false })
+    @Column({ type: DataType.INTEGER, allowNull: false })
         userId: number;
 
     @ApiProperty({ example: 'Выезд 2007', description: 'Название формы' })
