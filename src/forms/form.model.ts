@@ -33,6 +33,6 @@ export class Form extends Model<Form, FormCreationAttrs> {
     @Column({ type: DataType.ARRAY(DataType.JSON), allowNull: false })
         fields: object[];
 
-    @HasMany(() => Event)
-        events: Event[];
+    // @HasMany(() => Event)
+    //     events: Event[];
 }
