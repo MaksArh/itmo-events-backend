@@ -5,13 +5,11 @@ import { SsoService } from 'auth/sso.service';
 import * as jwkToPem from 'jwk-to-pem';
 import { type CreateUserDto } from 'users/dto/create-user.dto';
 import { type FastifyReply } from 'fastify';
-import { LoggerService } from 'logger/logger.service';
 
 @Injectable()
 export class AuthService {
     constructor (private readonly userRepository: UsersService,
-        private readonly ssoService: SsoService,
-        private readonly console: LoggerService) {
+        private readonly ssoService: SsoService) {
     }
 
     async updateTokensFromRefresh (refreshToken: string): Promise<any> {
@@ -56,17 +54,15 @@ export class AuthService {
         try {
             cookies.forEach(cookieConfig => {
                 const [name, value, maxAge] = cookieConfig;
-                reply.setCookie(name, `${value}`, {
+                void reply.setCookie(name, value.toString(), {
                     httpOnly: true,
                     ...(maxAge !== undefined && { maxAge }),
                     sameSite: 'strict',
                     path: '/'
                 });
             });
-            await this.console.log(['[COOKIE SETTED]']);
         } catch (e) {
-            console.error(`══[ERR] set cookie : ${e as string}:`);
-            await this.console.log(['══[ERR] set cookie :', e as string]);
+            console.error(`[ERR] set cookie : ${e as string}:`);
         }
     }
 }

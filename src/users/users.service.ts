@@ -4,6 +4,7 @@ import { User } from './user.model';
 import { type CreateUserDto } from './dto/create-user.dto';
 import { RolesService } from 'roles/roles.service';
 import * as jwt from 'jsonwebtoken';
+import { Role } from 'roles/role.model';
 
 @Injectable()
 export class UsersService {
@@ -32,24 +33,22 @@ export class UsersService {
 
     async updateUser (isu: number, updates: object): Promise<void> {
         try {
-            // Найдите пользователя, которого вы хотите обновить
             const user = await this.userRepository.findOne({ where: { isu } });
 
             if (user == null) {
                 throw new Error('User not found');
             }
 
-            // Обновите данные пользователя
             await user.update(updates);
         } catch (e) {
             console.log(`updateUser service ERR: ${e.message as string}`);
-            throw e; // Можете выбросить ошибку или обработать ее по вашему усмотрению
+            throw e;
         }
     }
 
     async getUser (isu: number): Promise<User | null> {
         try {
-            return await this.userRepository.findOne({ where: { isu } });
+            return await this.userRepository.findOne({ where: { isu }, include: [{ model: Role } ] });
         } catch (e) {
             console.log(`getUser service ERR: ${e.message as string}`);
             return null;

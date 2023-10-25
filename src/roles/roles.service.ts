@@ -6,6 +6,9 @@ import { Role } from './role.model';
 @Injectable()
 export class RolesService {
     constructor (@InjectModel(Role) private readonly roleRepository: typeof Role) {
+        // if ((this.roleRepository.findOne({ where: { value: 'USER' } })) !== null) {
+        //     void this.roleRepository.create({ value: 'USER', description: 'Пользователь' });
+        // }
     }
 
     async createRole (dto: createRoleDto): Promise<Role | null> {

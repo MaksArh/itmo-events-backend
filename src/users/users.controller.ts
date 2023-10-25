@@ -4,6 +4,8 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { User } from './user.model';
 import { JwtAuthGuard } from 'auth/jwt-auth.guard';
 import { Cookies } from 'decorators/cookie.decorator';
+import { Roles } from 'decorators/roles.decorator';
+import { RoleGuard } from 'auth/role.guard';
 
 @ApiTags('Пользователи')
 @Controller('users')
@@ -13,6 +15,8 @@ export class UsersController {
 
     @ApiOperation({ summary: 'Получение пользователя' })
     @ApiResponse({ status: 200, type: User })
+    @Roles('USER')
+    @UseGuards(RoleGuard)
     @Get('me')
     async getMe (@Cookies('id_token') idToken: string): Promise<User | null> {
         try {
@@ -26,6 +30,8 @@ export class UsersController {
 
     @ApiOperation({ summary: 'Получение пользователя по isu' })
     @ApiResponse({ status: 200, type: User })
+    @Roles('ADMIN')
+    @UseGuards(RoleGuard)
     @Get(':isu')
     async getUser (@Param() params): Promise<User | null> {
         return await this.usersService.getUser(params.isu);
@@ -33,6 +39,8 @@ export class UsersController {
 
     @ApiOperation({ summary: 'Обновление данных пользователя' })
     @ApiResponse({ status: 200, type: User })
+    @Roles('USER')
+    @UseGuards(RoleGuard)
     @Put('update')
     async updateUser (@Body() updates: User, @Cookies('id_token') idToken: string): Promise<boolean> {
         try {
