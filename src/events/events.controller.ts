@@ -51,13 +51,19 @@ export class EventsController {
         }
     }
 
+    @Get('register/:id')
+    async canRegister (@Param() params, @Cookies('id_token') idToken: string): Promise<boolean> {
+        const userId = this.userService.decodeUser(idToken).isu;
+        return await this.regService.canRegister(params.id, userId);
+    }
+
     // @ApiOperation({ summary: 'Получение мероприятия по id' })
     // @ApiResponse({ status: 200, type: Event })
     @Patch(':id')
     async editEvent (@Body() data: CreateEventDto): Promise<boolean> {
         try {
             await this.eventsService.editEvent(data);
-            return true
+            return true;
         } catch (e) {
             console.log(`[LOG] getEvent: ${e.message as string}`);
             return false;

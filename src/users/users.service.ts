@@ -34,11 +34,9 @@ export class UsersService {
     async updateUser (isu: number, updates: object): Promise<void> {
         try {
             const user = await this.userRepository.findOne({ where: { isu } });
-
             if (user == null) {
                 throw new Error('User not found');
             }
-
             await user.update(updates);
         } catch (e) {
             console.log(`updateUser service ERR: ${e.message as string}`);
@@ -48,7 +46,7 @@ export class UsersService {
 
     async getUser (isu: number): Promise<User | null> {
         try {
-            return await this.userRepository.findOne({ where: { isu }, include: [{ model: Role } ] });
+            return await this.userRepository.findOne({ where: { isu }, include: [{ model: Role }] });
         } catch (e) {
             console.log(`getUser service ERR: ${e.message as string}`);
             return null;

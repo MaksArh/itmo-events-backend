@@ -11,7 +11,7 @@ export class CreateEventDto {
 
     readonly eventStartDate: number;
 
-    readonly eventExpirationDate: number;
+    readonly eventExpirationDate?: number;
 
     readonly regStartDate: number;
 

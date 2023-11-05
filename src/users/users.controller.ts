@@ -15,8 +15,8 @@ export class UsersController {
 
     @ApiOperation({ summary: 'Получение пользователя' })
     @ApiResponse({ status: 200, type: User })
-    @Roles('USER')
-    @UseGuards(RoleGuard)
+    // @Roles('USER')
+    // @UseGuards(RoleGuard)
     @Get('me')
     async getMe (@Cookies('id_token') idToken: string): Promise<User | null> {
         try {

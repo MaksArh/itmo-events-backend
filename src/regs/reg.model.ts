@@ -10,6 +10,6 @@ export class Reg extends Model<Reg, RegCreationAttrs> {
     @Column({ type: DataType.INTEGER, unique: true, primaryKey: true, allowNull: false })
         eventId: number;
 
-    @Column({ type: DataType.ARRAY(DataType.JSON), allowNull: true })
-        regList: object[];
+    @Column({ type: DataType.JSONB, defaultValue: {} })
+        regList: Record<number, { data: object, state: string, comment: string }>;
 }

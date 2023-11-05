@@ -8,7 +8,7 @@ export class FormsService {
     constructor (@InjectModel(Form) private readonly formRepository: typeof Form) {
     }
 
-    async createForm (dto: CreateFormDto): Promise<Form> {
+    async create (dto: CreateFormDto): Promise<Form> {
         return await this.formRepository.create(dto);
     }
 
@@ -16,11 +16,24 @@ export class FormsService {
         return await this.formRepository.findOne({ where: { id } });
     }
 
-    async fetchForms (): Promise<Form[]> {
+    async fetch (): Promise<Form[]> {
         return await this.formRepository.findAll();
     }
 
-    async deleteForm (id: number): Promise<void> {
+    async update (id: number, updates: object): Promise<void> {
+        try {
+            const form = await this.formRepository.findOne({ where: { id } });
+
+            if (form !== null) {
+                await form.update(updates);
+            }
+        } catch (e) {
+            console.log(`updateForm service ERR: ${e.message as string}`);
+            throw e;
+        }
+    }
+
+    async delete (id: number): Promise<void> {
         await this.formRepository.destroy({ where: { id } });
     }
 }

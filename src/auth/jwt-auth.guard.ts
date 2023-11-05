@@ -14,15 +14,18 @@ export class JwtAuthGuard implements CanActivate {
             console.log('jwtguard works');
             const bearer = req.cookies.token_type;
             const accessToken = req.cookies.access_token;
-
+            console.log('jwt start');
             if (accessToken !== undefined && bearer === 'Bearer' &&
                 await this.authService.validateToken(accessToken)) {
+                console.log('yepi');
                 return true;
             } else if (req.cookies.refresh_token !== undefined) {
+                console.log('no');
                 const newTokens = await this.authService.updateTokensFromRefresh(req.cookies.refresh_token);
                 await this.authService.setCookies(res, newTokens);
                 return true;
             }
+            console.log('so no');
             return false;
         } catch (e) {
             console.log(`[ERR] JwtGuard: ${e.message as string}`);
