@@ -21,7 +21,7 @@ export class RegsService {
     }
 
     async deleteReg (id: number): Promise<void> {
-        await this.regRepository.destroy({ where: { id } });
+        await this.regRepository.destroy({ where: { eventId: id } });
     }
 
     async updateRegData (eventId: number, userId: number, dto: Omit<RegDto, 'data'>): Promise<void> {

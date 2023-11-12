@@ -70,13 +70,14 @@ export class EventsController {
         }
     }
 
-    @Delete('delete')
-    async deleteEvent (@Cookies('id_token') idToken: string, @Body() id: number): Promise<void> {
+    @Delete(':id')
+    async deleteEvent (@Cookies('id_token') idToken: string, @Param() params: { id: number }): Promise<boolean> {
         const isu = (this.userService.decodeUser(idToken)).isu;
-        const event = await this.eventsService.getEvent(id);
+        const event = await this.eventsService.getEvent(params.id);
         if (event !== null && event?.userId === isu) {
-            await this.eventsService.deleteEvent(id);
-            await this.regService.deleteReg(id);
+            await this.eventsService.deleteEvent(params.id);
+            await this.regService.deleteReg(params.id);
         }
+        return true;
     }
 }
