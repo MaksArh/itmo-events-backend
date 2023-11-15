@@ -22,7 +22,7 @@ export class EventsService {
 
     async createEvent (dto: CreateEventDto): Promise<Event> {
         const event = await this.eventRepository.create(dto);
-        if (dto.formId) {
+        if (dto.formId !== undefined) {
             const form = await this.formService.getFormById(dto.formId);
             if ((form != null)) {
                 await event.$set('form', [form.id]);
@@ -37,12 +37,11 @@ export class EventsService {
     }
 
     async editEvent (data: { id: number }): Promise<void> {
+        const event = await this.eventRepository.findOne({ where: { id: data.id } });
+        if (event == null) {
+            throw new Error('Event not found');
+        }
         try {
-            const event = await this.eventRepository.findOne({where: {id: data.id}});
-            if (event == null) {
-                throw new Error('Event not found');
-            }
-
             await event.update(data);
         } catch (e) {
             console.log(`updateEvent service ERR: ${e.message as string}`);

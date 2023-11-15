@@ -5,16 +5,20 @@ import { type Reg } from 'regs/reg.model';
 import { Cookies } from 'decorators/cookie.decorator';
 import { RegDto } from 'regs/dto/reg.dto';
 import { UsersService } from 'users/users.service';
+import { Roles } from 'decorators/roles.decorator';
 
 @ApiTags('Заявки')
 @Controller('regs')
 export class RegsController {
     constructor (private readonly regService: RegsService, private readonly usersService: UsersService) {}
+
+    @Roles('USER')
     @Get('fetch')
     async fetchAll (): Promise<Reg[]> {
         return await this.regService.fetchAll();
     }
 
+    @Roles('EVENTADMIN', 'EVENTMANAGER')
     @Patch(':id')
     async updateUserRegistration (@Param() params, @Body() body: { userId: number, dto: Omit<RegDto, 'data'> }): Promise<boolean> {
         try {
@@ -25,6 +29,7 @@ export class RegsController {
         }
     }
 
+    @Roles('USER')
     @Post(':id')
     async addUserRegistration (@Param() params, @Cookies('id_token') idToken: string, @Body() userData: RegDto): Promise<boolean> {
         try {
@@ -37,6 +42,7 @@ export class RegsController {
         }
     }
 
+    @Roles('EVENTADMIN', 'EVENTMANAGER')
     @Get(':id')
     async getReg (@Param() id: number): Promise<Reg | null> {
         return await this.regService.getRegById(id);

@@ -1,20 +1,20 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put } from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { FormsService } from 'forms/forms.service';
 import { Form } from 'forms/form.model';
 import { UsersService } from 'users/users.service';
 import { Cookies } from 'decorators/cookie.decorator';
 import { CreateFormDto } from 'forms/dto/create-form.dto';
-import { JwtAuthGuard } from 'auth/jwt-auth.guard';
+import { Roles } from 'decorators/roles.decorator';
 
 @ApiTags('Формы')
 @Controller('forms')
-// @UseGuards(JwtAuthGuard)
 export class FormsController {
     constructor (private readonly formService: FormsService, private readonly userService: UsersService) {}
 
     @ApiOperation({ summary: 'Получение форм' })
     @ApiResponse({ status: 200, type: Form })
+    @Roles('EVENTADMIN', 'ADMIN')
     @Get('fetch')
     async fetchForms (): Promise<Form[]> {
         return await this.formService.fetch();
@@ -22,6 +22,7 @@ export class FormsController {
 
     @ApiOperation({ summary: 'Получение форы по id' })
     @ApiResponse({ status: 200, type: Form })
+    @Roles('EVENTADMIN', 'ADMIN')
     @Get(':id')
     async getForm (@Param() params): Promise<Form | null> {
         return await this.formService.getFormById(params.id);
@@ -30,6 +31,7 @@ export class FormsController {
     @ApiBody({ type: CreateFormDto, description: 'userId сам подтягивается системой, передавать не надо' })
     @ApiOperation({ summary: 'Создание формы' })
     @ApiResponse({ status: 200, type: Form })
+    @Roles('EVENTADMIN', 'ADMIN')
     @Post('create')
     async createForm (@Body() data: Omit<CreateFormDto, 'userId'>, @Cookies('id_token') idToken: string):
     Promise<number> {
@@ -44,6 +46,7 @@ export class FormsController {
         }
     }
 
+    @Roles('EVENTADMIN', 'ADMIN')
     @Put('update')
     async updateForm (@Body() updates: Form): Promise<boolean> {
         try {
@@ -55,6 +58,7 @@ export class FormsController {
         }
     }
 
+    @Roles('EVENTADMIN', 'ADMIN')
     @Delete('delete')
     async deleteForm (@Cookies('id_token') idToken: string, @Body() id: number): Promise<void> {
         const isu = (this.userService.decodeUser(idToken)).isu;

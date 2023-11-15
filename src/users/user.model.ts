@@ -58,6 +58,14 @@ export class User extends Model<User, UserCreationAttrs> {
     @Column({ type: DataType.BOOLEAN, defaultValue: false })
         email_verified: boolean;
 
+    @ApiProperty({ example: 'РФ', description: 'Гражданин РФ/иностранец' })
+    @Column({ type: DataType.STRING, allowNull: true })
+        citizenship: string;
+
+    @ApiProperty({ example: 'Вяземский пр-т д.4', description: 'Адрес проживания' })
+    @Column({ type: DataType.STRING, allowNull: true })
+        residentialAddress: string;
+
     @ApiProperty({ example: 'true', description: 'Пользователь студент или нет' })
     @Column({ type: DataType.BOOLEAN, defaultValue: false })
         is_student: boolean;

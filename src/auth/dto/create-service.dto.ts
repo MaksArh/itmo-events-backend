@@ -1,6 +1,4 @@
-
-
-export class CreateServiceDto{
-    readonly name:string;
-    readonly data:object;
+export class CreateServiceDto {
+    readonly name: string;
+    readonly data: object;
 }

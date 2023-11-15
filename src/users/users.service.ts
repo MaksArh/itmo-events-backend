@@ -1,55 +1,72 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from './user.model';
 import { type CreateUserDto } from './dto/create-user.dto';
 import { RolesService } from 'roles/roles.service';
 import * as jwt from 'jsonwebtoken';
-import { Role } from 'roles/role.model';
+import { type UserData, type UserRO } from 'users/users.interface';
+import { type AddRoleDto } from 'users/dto/add-role.dto';
+import { Sequelize } from 'sequelize';
 
 @Injectable()
 export class UsersService {
     constructor (@InjectModel(User) private readonly userRepository: typeof User, private readonly roleService: RolesService) {
     }
 
-    async createUser (dto: CreateUserDto): Promise<User | null> {
-        try {
-            const user = await this.userRepository.create(dto);
-            const role = await this.roleService.getRoleByValue('USER');
-            if ((user != null) && (role != null)) {
-                await user.$set('roles', [role.id]);
-                user.roles = [role];
-                return user;
-            }
-            return null;
-        } catch (e) {
-            console.log(`createUser service ERR: ${e.message as string}`);
-            return null;
+    async createUser (dto: CreateUserDto): Promise<UserRO> {
+        const user = await this.userRepository.create(dto);
+        const role = await this.roleService.getRoleByValue('USER');
+        if (role != null) {
+            await user.$set('roles', [role.id]);
+        } else {
+            throw new NotFoundException('Role not found');
         }
+        return { user };
     }
 
-    decodeUser (idToken: string): CreateUserDto {
-        return jwt.decode(idToken) as CreateUserDto;
+    decodeUser (idToken: string): UserData {
+        return jwt.decode(idToken) as UserData;
     }
 
-    async updateUser (isu: number, updates: object): Promise<void> {
+    async updateUser (isu: number, updates: object): Promise<UserRO> {
+        const user = await this.userRepository.findOne({ where: { isu } });
+        if (user == null) {
+            throw new NotFoundException('User not found');
+        }
         try {
-            const user = await this.userRepository.findOne({ where: { isu } });
-            if (user == null) {
-                throw new Error('User not found');
-            }
             await user.update(updates);
-        } catch (e) {
-            console.log(`updateUser service ERR: ${e.message as string}`);
-            throw e;
+            return { user };
+        } catch (error) {
+            throw new InternalServerErrorException('Failed to update user');
         }
     }
 
-    async getUser (isu: number): Promise<User | null> {
-        try {
-            return await this.userRepository.findOne({ where: { isu }, include: [{ model: Role }] });
-        } catch (e) {
-            console.log(`getUser service ERR: ${e.message as string}`);
-            return null;
+    async addRole (dto: AddRoleDto): Promise<AddRoleDto> {
+        const user = await this.userRepository.findByPk(dto.userId);
+        const role = await this.roleService.getRoleByValue(dto.value);
+        if ((role != null) && (user != null)) {
+            await user.$add('role', role.id);
+            return dto;
         }
+        throw new HttpException('User or Role not found', HttpStatus.NOT_FOUND);
+    }
+
+    async getUser (isu: number): Promise<UserRO> {
+        const user = await this.userRepository.findOne({
+            where: { isu },
+            attributes: {
+                include: [
+                    [Sequelize.literal('(SELECT array_agg("value") FROM "roles" INNER JOIN "user_roles" ON "roles"."id" = "user_roles"."roleId" WHERE "user_roles"."userId" = "User"."isu")'), 'roles']
+                ]
+            }
+        });
+        if (user === null) {
+            throw new NotFoundException('User not found');
+        }
+        const userData: UserData = {
+            ...user.dataValues,
+            roles: user.dataValues.roles
+        };
+        return { user: userData };
     }
 }

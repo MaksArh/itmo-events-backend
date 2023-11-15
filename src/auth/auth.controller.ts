@@ -23,7 +23,7 @@ export class AuthController {
                 if (isString(tokenData.error)) {
                     return await res.status(301).redirect('/error');
                 }
-                if (tokenData?.id_token) {
+                if (tokenData.id_token !== undefined) {
                     await this.authService.importUser(tokenData?.id_token);
                     await this.authService.setCookies(res, tokenData);
                 } else {

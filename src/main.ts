@@ -7,7 +7,6 @@ import fastifyCors from '@fastify/cors';
 import fastifyHelmet from '@fastify/helmet';
 import { FastifyAdapter, type NestFastifyApplication } from '@nestjs/platform-fastify';
 
-
 const CORS_OPTIONS = {
     origin: ['https://events.itmo.space', 'https://id.itmo.ru'], // Обновленный origin
     allowedHeaders: [

@@ -22,10 +22,9 @@ export class RoleGuard implements CanActivate {
             const token = req.cookies.id_token;
             if (token !== undefined) {
                 const profile = this.userService.decodeUser(token);
-                const user = await this.userService.getUser(profile.isu);
+                const user = (await this.userService.getUser(profile.isu)).user;
                 if (user != null) {
-                    console.log(user);
-                    return (user.roles.some(role => reqRoles.includes(role.value)));
+                    return (user.roles.some((role: string) => reqRoles.includes(role)));
                 }
             }
             return false;
