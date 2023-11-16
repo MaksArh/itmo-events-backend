@@ -1,4 +1,4 @@
-import {Body, Controller, Get, Param, Patch, Post, UseGuards} from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { RegsService } from 'regs/regs.service';
 import { type Reg } from 'regs/reg.model';
@@ -6,8 +6,8 @@ import { Cookies } from 'decorators/cookie.decorator';
 import { RegDto } from 'regs/dto/reg.dto';
 import { UsersService } from 'users/users.service';
 import { Roles } from 'decorators/roles.decorator';
-import {JwtAuthGuard} from "auth/jwt-auth.guard";
-import {RoleGuard} from "auth/role.guard";
+import { JwtAuthGuard } from 'auth/jwt-auth.guard';
+import { RoleGuard } from 'auth/role.guard';
 
 @ApiTags('Заявки')
 @UseGuards(JwtAuthGuard)

@@ -13,7 +13,11 @@ export class UsersService {
     constructor (@InjectModel(User) private readonly userRepository: typeof User, private readonly roleService: RolesService) {
     }
 
-    async createUser (dto: CreateUserDto): Promise<UserRO> {
+    async createUser (dto: CreateUserDto): Promise<UserRO | null> {
+        const candidate = await this.userRepository.findByPk(dto.isu);
+        if (candidate !== null) {
+            return null;
+        }
         const user = await this.userRepository.create(dto);
         const role = await this.roleService.getRoleByValue('USER');
         if (role != null) {

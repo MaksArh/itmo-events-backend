@@ -8,7 +8,7 @@ import { Reg } from 'regs/reg.model';
 import { Form } from 'forms/form.model';
 import { FormsModule } from 'forms/forms.module';
 import { RegsModule } from 'regs/regs.module';
-import {AuthModule} from "auth/auth.module";
+import { AuthModule } from 'auth/auth.module';
 
 @Module({
     controllers: [EventsController],

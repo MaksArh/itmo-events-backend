@@ -5,7 +5,6 @@ import * as process from 'process';
 import { InjectModel } from '@nestjs/sequelize';
 import { Service } from 'auth/service.model';
 import { type CreateServiceDto } from 'auth/dto/create-service.dto';
-import { LoggerService } from 'logger/logger.service';
 
 @Injectable()
 export class SsoService {

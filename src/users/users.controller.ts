@@ -7,7 +7,7 @@ import { Roles } from 'decorators/roles.decorator';
 import { RoleGuard } from 'auth/role.guard';
 import { type UserRO } from 'users/users.interface';
 import { AddRoleDto } from 'users/dto/add-role.dto';
-import {JwtAuthGuard} from "auth/jwt-auth.guard";
+import { JwtAuthGuard } from 'auth/jwt-auth.guard';
 
 @ApiTags('Пользователи')
 @UseGuards(JwtAuthGuard)

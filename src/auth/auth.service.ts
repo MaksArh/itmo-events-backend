@@ -33,10 +33,7 @@ export class AuthService {
     async importUser (idToken: string): Promise<void> {
         try {
             const userDto = jwt.decode(idToken) as CreateUserDto;
-            const candidate = await this.userRepository.getUser(userDto.isu);
-            if (candidate === null) {
-                await this.userRepository.createUser(userDto);
-            }
+            await this.userRepository.createUser(userDto);
         } catch (e) {
             console.log(`══[ERR] auth service importUser: ${e.message as string}`);
         }
