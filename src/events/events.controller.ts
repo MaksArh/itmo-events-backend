@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import {Body, Controller, Delete, Get, Param, Patch, Post, UseGuards} from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CreateEventDto } from 'events/dto/create-event.dto';
 import { EventsService } from 'events/events.service';
@@ -8,8 +8,12 @@ import { UsersService } from 'users/users.service';
 import { RegsService } from 'regs/regs.service';
 import { FormsService } from 'forms/forms.service';
 import { Roles } from 'decorators/roles.decorator';
+import {JwtAuthGuard} from "auth/jwt-auth.guard";
+import {RoleGuard} from "auth/role.guard";
 
 @ApiTags('Мероприятия')
+@UseGuards(JwtAuthGuard)
+@UseGuards(RoleGuard)
 @Controller('events')
 export class EventsController {
     constructor (

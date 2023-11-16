@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put } from '@nestjs/common';
+import {Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, UseGuards} from '@nestjs/common';
 import { ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { FormsService } from 'forms/forms.service';
 import { Form } from 'forms/form.model';
@@ -6,8 +6,12 @@ import { UsersService } from 'users/users.service';
 import { Cookies } from 'decorators/cookie.decorator';
 import { CreateFormDto } from 'forms/dto/create-form.dto';
 import { Roles } from 'decorators/roles.decorator';
+import {JwtAuthGuard} from "auth/jwt-auth.guard";
+import {RoleGuard} from "auth/role.guard";
 
 @ApiTags('Формы')
+@UseGuards(JwtAuthGuard)
+@UseGuards(RoleGuard)
 @Controller('forms')
 export class FormsController {
     constructor (private readonly formService: FormsService, private readonly userService: UsersService) {}

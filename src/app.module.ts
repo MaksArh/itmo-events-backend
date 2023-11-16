@@ -18,22 +18,10 @@ import { AuthModule } from 'auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { readFileSync } from 'fs';
 import { LoggerModule } from 'logger/logger.module';
-import { APP_GUARD } from '@nestjs/core';
-import { JwtAuthGuard } from 'auth/jwt-auth.guard';
-import { RoleGuard } from 'auth/role.guard';
 
 @Module({
     controllers: [],
-    providers: [
-        {
-            provide: APP_GUARD,
-            useClass: JwtAuthGuard
-        },
-        {
-            provide: APP_GUARD,
-            useClass: RoleGuard
-        }
-    ],
+    providers: [],
     imports: [
         ConfigModule.forRoot({
             isGlobal: true,

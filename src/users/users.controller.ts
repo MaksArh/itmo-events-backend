@@ -7,8 +7,11 @@ import { Roles } from 'decorators/roles.decorator';
 import { RoleGuard } from 'auth/role.guard';
 import { type UserRO } from 'users/users.interface';
 import { AddRoleDto } from 'users/dto/add-role.dto';
+import {JwtAuthGuard} from "auth/jwt-auth.guard";
 
 @ApiTags('Пользователи')
+@UseGuards(JwtAuthGuard)
+@UseGuards(RoleGuard)
 @Controller('users')
 export class UsersController {
     constructor (private readonly usersService: UsersService) { }
@@ -22,7 +25,7 @@ export class UsersController {
         return await this.usersService.getUser(isu);
     }
 
-    @Roles('ADMIN')
+    @Roles('USER')
     @Post('/role')
     async addRole (@Body() dto: AddRoleDto): Promise<AddRoleDto> {
         return await this.usersService.addRole(dto);
